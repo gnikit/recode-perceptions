@@ -1,192 +1,181 @@
-import time
-import numpy as np 
-import pandas as pd
 import torch
-import torch.nn as nn
-import argparse
-import wandb
-# network
-from resnet101 import MyResNet 
-# data
-import dataset 
-# dataloader
-from my_classes_pytorch import CustomImageDataset 
-from torch.utils.data import DataLoader
-import torchvision.transforms as transforms
+"""
+Contains functions for training and testing a PyTorch model.
+"""
 
-from plots import prediction_hist
-import gc
-# import matplotlib.pyplot as plt
+def train_step(
+    model: torch.nn.Module,
+    train_dataloader: torch.utils.data.DataLoader,
+    loss_fn: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scheduler: torch.optim.Optimizer,
+    device: torch.device
+    ):
+    """Trains the PyTorch model end-to-end for one epoch. Steps are: 
+    Forward pass, backward pass, loss calculation, optimizer step
+    
+    Args:
+    model: a PyTorch model for training.
+    dataloader: A DataLoader instance for the model to be trained on.
+    loss_fn: A PyTorch loss function to minimise.
+    optimizer: A PyTorch optimizer to help minimize the loss function.
+    device: A target device to compute on (e.g. "cuda" or "cpu").   
+    """
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--epochs', default=20, type=int, help='number of training epochs')
-parser.add_argument('--batch_size', default=128, type=int, help='batch size for SGD') 
-parser.add_argument('--model', default='resnet101', type=str, help='model_loaded')
-parser.add_argument('--pre', default='keras', type=str, help='pre_processing')
-parser.add_argument('--oversample', default=True, type=bool, help='whether to oversample')
-parser.add_argument('--prefix', default='/rds/general/user/emuller/home/emily/phd/', help='when using RDS')
-parser.add_argument('--lr', default=1e-3,type=float, help='number of latent dimensions')
-parser.add_argument('--study_id', default='50a68a51fdc9f05596000002', type = str, help='perceptions_1_to_6')
-parser.add_argument('--wandb_name', default='dummy',type=str, help='number of latent dimensions')
-parser.add_argument('--data', default= '006_place_pulse/place-pulse-2.0/image/images/', type=str, help='dataset')
-opt = parser.parse_args()
-print(opt)
+    # Put model in train mode
+    model.train() 
 
-# Detect CUDA devices
-use_cuda = torch.cuda.is_available()                   # check if GPU exists
-device = torch.device("cuda" if use_cuda else "cpu")
-
-# WANDB for HO
-id = '%s' % opt.wandb_name
-wandb.login(key='')
-wandb.init(id = id, project='place_pulse_phd', entity='emilymuller1991')
-
-# INITIALISE MODEL
-model = MyResNet()
-model.to(device)
-# here is the structure
-pytorch_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print ('Model loaded with %s parameters' % str(pytorch_total_params) )
-
-# PREPARING DATA
-df_img = dataset.format_img_ids(opt.prefix, opt.data, opt.path)
-df_img = dataset.add_qscore(opt.prefix, df_img, opt.study_id)
-df_img = dataset.scale_data(1,10, df_img)
-# split train, test
-df_train = df_img.sample(frac=0.7)
-df_val = df_train.sample(frac=0.07)
-df_train = df_train.drop(df_val.index)
-df_test = df_img.drop(df_train.index)
-# oversample
-df_train = dataset.oversample(df_train)
-# plot histograms
-df_train['trueskill.score_norm'].hist()
-df_val['trueskill.score_norm'].hist()
-df_test['trueskill.score_norm'].hist()
-
-# DATA LOADER
-preprocess = transforms.Compose([
-        transforms.Lambda(lambda image: torch.from_numpy(np.array(image).astype(np.float64)/255)),
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
-
-params = {'batch_size': opt.batch_size,
-        'shuffle': True,
-        'num_workers': 2,
-        'pin_memory': True,
-        'drop_last': True}
-
-start_data_loading = time.time()
-
-training_gen = CustomImageDataset(df_train, prefix=opt.prefix+opt.data, transform=preprocess, target_transform=None)
-validation_gen = CustomImageDataset(df_val, prefix=opt.prefix+opt.data, transform=preprocess, target_transform=None)
-test_gen = CustomImageDataset(df_test, prefix=opt.prefix+opt.data, transform=preprocess, target_transform=None)
-train_dataset = DataLoader(training_gen, **params) 
-validation_dataset = DataLoader(validation_gen, **params) 
-test_dataset = DataLoader(test_gen, **params)
-print ('Finished loading data in %s seconds' % str(time.time() - start_data_loading))
-
-print ('There are %s images in the training set' % str(training_gen.__len__()) )
-print ('There are %s images in the validation set' % str(validation_gen.__len__()) )
-print ('There are %s images in the test set' % str(test_gen.__len__()) )
-
-# INITIALISE BACKPROP
-model_params = list(model.parameters())
-optimizer = torch.optim.Adam(model_params, opt.lr)
-lambda_decay = lambda epoch: opt.lr * 1 / (1. + (opt.lr/opt.epochs) * epoch)
-scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda_decay)
-
-# TRAINING
-criterion = nn.MSELoss()
-training_outcomes = {}
-init_time = time.time()
-
-for epoch in range(1,opt.epochs+1):
-    start_time = time.time()
-    epoch_time = time.time()
+    # Setup train loss over epoch
     running_loss = 0
-    model.train(True)
-    for i, data in enumerate(train_dataset):
-        train_x = data[0]
-        y = data[1].unsqueeze(dim=1)
+
+    # loop over training batches
+    for i, data in enumerate(train_dataloader):
+        # Format expected input dimensions and send data to device
+        train_x = data[0].to(device)
+        y = data[1].unsqueeze(dim=1).to(device)
         
+        # 1. Forward Pass
+        output = model.forward(train_x)
+
+        # 2. Calculate and accumulate loss
+        loss = loss_fn(output.float() ,y.float())
+        running_loss += loss.detach().item()
+
+        # 3. Optimzer zero grad
         optimizer.zero_grad(set_to_none=False)
-        output = model.forward(train_x.to(device))
-        loss = criterion(output.float() ,y.float().to(device))
+        
+        # 4. Loss backprop
         loss.backward()
 
+        # 5. Optimizer step
         optimizer.step()
+        print ('Training Batch %s complete' % str(i))
     
-        # print statistics
-        running_loss += loss.detach().item()
-    
+    # 6. Optimizer Step
     scheduler.step()
-    loss = loss.detach().item()
-    avg_tloss = running_loss/ (i + 1)
-    print ('EPOCH::training completed in %s for epoch %s' % (time.time() - start_time, epoch))
 
-    # validation loss
-    model.train(False)
-    running_vloss = 0
-    for i, vdata in enumerate(validation_dataset):
-        vinputs = vdata[0]
-        vlabels = vdata[1].unsqueeze(dim=1)
-        voutputs = model.forward(vinputs.to(device))
-        vloss = criterion(voutputs.float() , vlabels.float().to(device)).detach().item()
-        running_vloss += vloss
+    # Adjust metrics to get average loss and accuracy per batch 
+    avg_train_loss = running_loss/ (len(train_dataloader))
+    return avg_train_loss
 
-    avg_vloss = running_vloss / (i + 1)
-    print ('EPOCH::validation completed in %s for epoch %s' % (time.time() - start_time, epoch))
+def test_step(
+    model: torch.nn.Module,
+    test_dataloader: torch.utils.data.DataLoader,
+    loss_fn: torch.nn.Module,
+    device: torch.device
+    ):
+    """Tests the PyTorch model end-to-end for one epoch. Steps are: 
+    Forward pass and loss calculation.
+    
+    Args:
+    model: a PyTorch model for testing.
+    dataloader: A DataLoader instance for the model to be trained on.
+    loss_fn: A PyTorch loss function to calculate loss on test data.
+    device: A target device to compute on (e.g. "cuda" or "cpu").   
+    """
 
-    print('LOSS train {} valid {}'.format(avg_tloss, avg_vloss))
+    # Put model in eval
+    model.eval()
 
-    # save training and validation loss
-    print ('Epoch finished in %s seconds' % str(time.time() - epoch_time))
+    # Setup train loss over epoch
+    running_loss = 0
 
-    training_outcomes[epoch] = [int(epoch), avg_tloss, avg_vloss, epoch_time]
-    df = pd.DataFrame(training_outcomes).T
-    df.columns = ['epoch', 'loss_train', 'loss_val', 'time']
-    df.to_csv(opt.prefix + '006_place_pulse/place-pulse-2.0/outputs/epoch_loss_history_%s.csv' % (opt.model + '_epochs_' + str(opt.epochs) + '_lr_' + str(opt.lr) + str(opt.oversample) + str(opt.study_id)))
+    # loop over val/test batches
+    for i, data in enumerate(test_dataloader):
+        # Format expected input dimensions and send data to device
+        test_x = data[0].to(device)
+        print(test_x[0])
+        y = data[1].unsqueeze(dim=1).to(device)
+        
+        # 1. Forward Pass
+        output = model.forward(test_x)
 
-    wandb.log( {
-        'loss_train': avg_tloss,
-        'loss_val': avg_vloss,
-    })
+        # 2. Calculate and accumulate loss
+        loss = loss_fn(output.float(), y.float())
+        running_loss += loss.detach().item()
 
-    # save model checkpoint
-    filepath = opt.prefix + '006_place_pulse/place-pulse-2.0/model/torch_resnet/model_checkpoint_epoch_%s_%s.pt' % ( str(opt.epochs), opt.wandb_name )
-    state = {
-        'epoch': epoch,
-        'state_dict': model.state_dict(),
-        'optimizer': optimizer.state_dict(),
+    # Adjust metrics to get average loss and accuracy per batch 
+    avg_test_loss = running_loss/ (len(test_dataloader))
+    return avg_test_loss
+
+def train(model: torch.nn.Module, 
+          train_dataloader: torch.utils.data.DataLoader, 
+          val_dataloader: torch.utils.data.DataLoader, 
+          optimizer: torch.optim.Optimizer,
+          scheduler: torch.optim.Optimizer,
+          loss_fn: torch.nn.Module,
+          epochs: int,
+          device: torch.device,
+          save_model: str,
+          wandb: bool):
+    """Trains PyTorch model and reports validation accuracy
+
+    Passes a target PyTorch models through train and validation set
+    functions for a number of epochs, training and validating the model
+    in the same epoch loop.
+    Calculates, prints and stores evaluation metrics throughout.
+
+    Args:
+    model: A PyTorch model to be trained and validated.
+    train_dataloader: A DataLoader instance for the model to be trained on.
+    val_dataloader: A DataLoader instance for the model to be validated on.
+    optimizer: A PyTorch optimizer to help minimize the loss function.
+    scheduler: A PyTorch scheduler to decrease learning rate over epochs.
+    loss_fn: A PyTorch loss function to calculate loss on both datasets.
+    epochs: An integer indicating how many epochs to train for.
+    device: A target device to compute on (e.g. "cuda" or "cpu").
+    Returns:
+    A dictionary of training and testing loss as well as training and
+    validation accuracy metrics. Each metric has a value in a list for 
+    each epoch.
+    In the form: {train_loss: [...],
+              val_loss: [...],
+    For example if training for epochs=2: 
+             {train_loss: [2.0616, 1.0537],
+              val_loss: [1.2641, 1.5706],
+    """
+    # Create empty results dictionary
+    results = {"train_loss": [],
+               "val_loss": [],
     }
-    torch.save(state, filepath)
 
-    torch.cuda.empty_cache()
-    gc.collect() 
+    # Loop through training and testing steps for a number of epochs
+    for epoch in range(epochs):
+        train_loss = train_step(model=model,
+                                train_dataloader=train_dataloader,
+                                loss_fn=loss_fn,
+                                optimizer=optimizer,
+                                scheduler=scheduler,
+                                device=device)
+        val_loss = test_step(model=model,
+                                test_dataloader=val_dataloader,
+                                loss_fn=loss_fn,
+                                device=device)
 
-end_time = init_time = time.time()
-print ('Model trained in %s hours' % str((init_time - start_time)/3600))
+        # Print out what's happening
+        print(
+          f"Epoch: {epoch+1} | "
+          f"train_loss: {train_loss:.4f} | "
+          f"val_loss: {val_loss:.4f} | "
+        )
 
-########################################################## CLEAR GPU MEMORY
+        # Update results dictionary
+        results["train_loss"].append(train_loss)
+        results["val_loss"].append(val_loss)
 
-# TESTING LOSS
-model.train(False)
-running_tloss = 0
-y = np.zeros((len(test_gen), opt.batch_size))
-y_true = np.zeros((len(test_gen), opt.batch_size ))
-for i, tdata in enumerate(test_dataset):
-    test_x = tdata[0]
-    tlabels = tdata[1].unsqueeze(dim=1)
-    toutputs = model.forward(test_x.to(device))
-    tloss = criterion(toutputs.float(), tlabels.float().to(device)).detach().item()
-    running_tloss += tloss
-    y[i] = np.squeeze(toutputs.cpu().detach().numpy())
-    y_true[i] = np.squeeze(tlabels.numpy())
-y = y[y != 0]
-y_true = y_true[y_true != 0]
-avg_testloss = running_tloss/(i+1)
-prediction_hist(y.flatten(), y_true.flatten(), opt.model + '_epochs_' + str(opt.epochs) + '_lr_' + str(opt.lr)  + str(opt.oversample) + str(opt.study_id), opt.prefix )
-print('LOSS train {} valid {} test {}'.format(avg_tloss, avg_vloss, avg_testloss))
+        if wandb is True:
+            wandb.log( {
+                'loss_train': train_loss,
+                'loss_val': val_loss,
+                })
+
+    if save_model is not None:
+        state = {
+            'epoch': epochs,
+            'state_dict': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+        }  
+        torch.save(state, save_model + '.pt')
+
+    # Return the filled results at the end of the epochs
+    return results
