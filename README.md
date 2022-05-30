@@ -17,7 +17,7 @@ This model is trained on 70K images with associated perception scores to be able
 
 We assume that you're using Python 3.7 with pip installed and commands are unix.
 
-### Setting up a virtual environment
+#### Setting up a virtual environment
 
 We will set up a virtual environment for running our scripts. In this case, installing specific package versions will not interfere with other programmes we run locally as the environment is contained. Initially, let's set up a virtual environment with python version 3.7:
 
@@ -36,6 +36,8 @@ Let's configure our environment by installing all the necessary packages located
 ```
 pip install -r requirements.txt
 ```
+
+### Dataset
 
 Then, run the download script to downloads all of the Place Pulse images (~3GB) from here and put them in the input/images/ directory:
 
