@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 import argparse
 # import wandb
-from train.model_builder import MyCNN
-import train.datautils as datautils 
-from train.dataset_generator import CustomImageDataset 
-import train.train as train
+from model_builder import MyCNN
+import datautils as datautils 
+from dataset_generator import CustomImageDataset 
+import train as train
 from torch.utils.data import DataLoader
 from timeit import default_timer as timer 
 
@@ -28,6 +28,7 @@ def main():
 
     # detect devices
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print ('Running on %s device' % device)
 
     # # WANDB for HO
     # id = '%s' % opt.wandb_name
@@ -35,7 +36,7 @@ def main():
     # wandb.init(id = id, project='place_pulse_phd', entity='emilymuller1991')
 
     # load image metadata
-    df_train, df_val, df_test = datautils.pp_process_input(opt.study_id, opt.root_dir, opt.data_dir, oversample=opt.oversample, verbose=False)
+    df_train, df_val, df_test = datautils.pp_process_input(opt.study_id, opt.root_dir, opt.data_dir, oversample=opt.oversample, verbose=True)
 
     # create dataloaders
     training_gen = CustomImageDataset(df_train, root_dir=opt.root_dir + opt.data_dir, transform=opt.pre)
@@ -45,14 +46,14 @@ def main():
             'shuffle': True,
             'num_workers': 1,
             'pin_memory': True,
-            'drop_last': False}
+            'drop_last': True}
     train_dataloader = DataLoader(training_gen, **params) 
     validation_dataloader = DataLoader(validation_gen, **params) 
     test_dataloader = DataLoader(test_gen, **params)
 
-    print ('There are %s images in the training set' % str(train_dataloader.__len__()) )
-    print ('There are %s images in the validation set' % str(validation_dataloader.__len__()) )
-    print ('There are %s images in the test set' % str(test_dataloader.__len__()) )
+    print ('There are %s images in the training set' % str(train_dataloader.__len__()*opt.batch_size) )
+    print ('There are %s images in the validation set' % str(validation_dataloader.__len__()*opt.batch_size) )
+    print ('There are %s images in the test set' % str(test_dataloader.__len__()*opt.batch_size) )
 
     # initialise model
     model = MyCNN()
@@ -77,7 +78,7 @@ def main():
                         loss_fn=loss_fn, 
                         epochs=opt.epochs,
                         device=device,
-                        save_model=opt.root_dir + '/outputs/models/' + opt.run_name,
+                        save_model=opt.root_dir + 'outputs/models/' + opt.run_name,
                         wandb=False)
 
     # End the timer and print out how long it took

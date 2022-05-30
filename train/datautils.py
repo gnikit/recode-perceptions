@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 def pp_process_input(
     perception_study: str,
@@ -23,9 +24,15 @@ def pp_process_input(
         df_train = oversample_images(df_train)
     if verbose == True:
         # plot histograms
-        # df_train['trueskill.score_norm'].hist()
-        # df_val['trueskill.score_norm'].hist()
-        # df_test['trueskill.score_norm'].hist()
+        df_train['trueskill.score_norm'].hist()
+        plt.savefig(root_dir + 'outputs/plots/train_dist.png')
+        plt.clf()
+        df_val['trueskill.score_norm'].hist()
+        plt.savefig(root_dir + 'outputs/plots/val_dist.png')
+        plt.clf()
+        df_test['trueskill.score_norm'].hist()
+        plt.savefig(root_dir + 'outputs/plots/test_dist.png')
+        plt.clf()
         pass
 
     return df_train, df_val, df_test

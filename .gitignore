@@ -1,2 +1,7 @@
-input/
+input/images/
+input/meta/
+input/test_images/
+input/images.zip
+input/places365standard_easyformat
 outputs/
+venv/
