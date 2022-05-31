@@ -1,4 +1,5 @@
 import argparse
+import os
 from timeit import default_timer as timer
 
 import datautils as datautils
@@ -24,7 +25,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--root_dir",
-    default="/rds/general/user/emuller/home/emily/phd/",
+    default=os.getcwd(),
     help="path to recode-perceptions",
 )
 parser.add_argument("--lr", default=1e-3, type=float, help="learning rate")

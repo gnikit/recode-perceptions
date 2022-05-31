@@ -52,7 +52,8 @@ def get_image_id(f):
 
 
 def create_image_df(root_dir, data_dir):
-    """DataFrame of image names (as found in metadata.csv and location of image file"""
+    """DataFrame of image names (as found in metadata.csv)
+    and location of image file"""
     path = root_dir + data_dir
     files = os.listdir(path)
     img_id = get_image_id(files)
