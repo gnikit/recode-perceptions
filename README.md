@@ -1,11 +1,11 @@
-# ReCoDE Perceptions - An end-to-end supervised learning task
+# PyTorch implementation for end-to-end training of a deep learning model
 
 Recode Perceptions is a pyTorch implementation of a deep convolutional neural network model trained on place pulse perceptions data, developed by Emily Muller.
 
 This model is trained on 70K images with associated perception scores to be able to predict safety, beauty and wealth across new unseen images of the urban environment. Through transfer learning the model can achieve prediction accuracies within plus or minus one decile.
 
 ## Overview
-
+- learning/ contains learning material to help you understand the science of deep learning and the substantive background of urban perception.
 - demo/ contains a notebook showing how to import a dataset, load a model and run it on that dataset making forward and backward passes.
 - train/ contains code for full model training pipeline.
 - model/ contains an already trained model.
@@ -13,11 +13,14 @@ This model is trained on 70K images with associated perception scores to be able
 - output/ folder for model training outputs.
 - tests/ contains unit tests for the codebase.
 
+## Getting started
+Clone this repository into your local drive. root_dir will now refer to the /local_path/to_this/directory/recode-perceptions.
+
 ### Installation
 
-We assume that you're using Python 3.7 with pip installed and commands are unix.
+We assume that you're using Python 3.7 with pip installed.
 
-#### Setting up a virtual environment
+### Setting up a virtual environment
 
 We will set up a virtual environment for running our scripts. In this case, installing specific package versions will not interfere with other programmes we run locally as the environment is contained. Initially, let's set up a virtual environment with python version 3.7:
 
@@ -39,7 +42,7 @@ pip install -r requirements.txt
 
 ### Dataset
 
-Then, run the download script to downloads all of the Place Pulse images (~3GB) from here and put them in the input/images/ directory:
+The dataset can be downloaded from dropbox. Run wget (below) to downloads all of the Place Pulse images (~3GB) and put them in the input/images/ directory:
 
 ```
 wget -O /root/recode/input/images.zip https://www.dropbox.com/s/grzoiwsaeqrmc1l/place-pulse-2.0.zip?dl=1
@@ -50,6 +53,6 @@ where root is the path to the recode repository. Unzip/extract all files in the 
 ```
 unzip images.zip
 ```
-
+In addition, unzip input/meta.zip to extract the label information.
 
 
