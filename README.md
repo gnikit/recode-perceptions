@@ -5,15 +5,17 @@ Recode Perceptions is a pyTorch implementation of a deep convolutional neural ne
 This model is trained on 70K images with associated perception scores to be able to predict safety, beauty and wealth across new unseen images of the urban environment. Through transfer learning the model can achieve prediction accuracies within plus or minus one decile.
 
 ## Overview
+
 - learning/ contains learning material to help you understand the science of deep learning and the substantive background of urban perception.
 - demo/ contains a notebook showing how to import a dataset, load a model and run it on that dataset making forward and backward passes.
-- train/ contains code for full model training pipeline.
+- deep_cnn/ contains code for full model training pipeline.
 - model/ contains an already trained model.
 - input/ contains the original image data (to download - see below) and metadata.
 - output/ folder for model training outputs.
 - tests/ contains unit tests for the codebase.
 
 ## Getting started
+
 Clone this repository into your local drive. root_dir will now refer to the /local_path/to_this/directory/recode-perceptions.
 
 ### Installation
@@ -53,6 +55,7 @@ where root is the path to the recode repository. Unzip/extract all files in the 
 ```
 unzip images.zip
 ```
+
 In addition, unzip input/meta.zip to extract the label information.
 
 

@@ -1,2 +1,1 @@
 pytest
-ruby==2.6
