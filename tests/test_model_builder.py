@@ -2,7 +2,7 @@ import torch
 
 
 def test_model_builder():
-    from train.model_builder import MyCNN
+    from deep_cnn.model_builder import MyCNN
 
     """Test random input
     passes through network
