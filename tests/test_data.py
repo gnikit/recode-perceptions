@@ -1,12 +1,8 @@
-import pytest
+from deep_cnn.datautils import add_qscore, create_image_df
 
 
-@pytest.fixture
 def test_image_dataframe(test_data):
-    from deep_cnn.datautils import create_image_df
-
-    """Test images are read in
-    """
+    """Test images are read in"""
     test_image_df = create_image_df(data_dir=test_data)
     # =================================
     # TEST SUITE
@@ -17,17 +13,14 @@ def test_image_dataframe(test_data):
 
 
 def test_adding_labels(root_dir, test_data):
-    from deep_cnn.datautils import add_qscore
-
-    """Test scores are added
-    """
-    labels_df = add_qscore(root_dir=root_dir, images_df=test_image_dataframe())
-    print(labels_df)
+    """Test scores are added"""
+    test_image_df = create_image_df(data_dir=test_data)
+    labels_df = add_qscore(root_dir=root_dir, images_df=test_image_df)
     # =================================
     # TEST SUITE
     # =================================
-    # Check the dictionary has read both images
-    assert labels_df
+    # Check labels are added
+    assert labels_df["trueskill.score"] is not None
 
 
 # def test_dataset_generator():

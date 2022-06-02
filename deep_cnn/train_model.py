@@ -8,7 +8,7 @@ from dataset_generator import dataloader
 from model_builder import MyCNN
 from utils import argument_parser, detect_device
 
-import train as train
+import train
 
 # import wandb
 
