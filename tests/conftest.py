@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def test_data():
-    return Path(__file__).parent / "test_images"
+    return Path(__file__).parent / "test_input/test_images"
 
 
 @pytest.fixture
