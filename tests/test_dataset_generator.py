@@ -1,6 +1,3 @@
-from pathlib import Path
-
-
 def test_dataset_generator(root_dir, test_data, study, params):
     """tests dataset iterator"""
     from deep_cnn.dataset_generator import dataloader
@@ -13,9 +10,7 @@ def test_dataset_generator(root_dir, test_data, study, params):
         verbose=False,
         perception_study=study,
     )
-    train_dataloader = dataloader(
-        df_train, Path(root_dir, test_data), "resnet", "train", params
-    )
+    train_dataloader = dataloader(df_train, test_data, "resnet", "train", params)
 
     for x, y in train_dataloader:
         a = x.numpy()
