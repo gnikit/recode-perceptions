@@ -40,7 +40,7 @@ def test_training_epoch(root_dir, test_data, study, params, metadata):
         loss_fn=loss_fn,
         epochs=1,
         device="cpu",
-        save_model=Path(root_dir, "outputs/models/test.pt"),
+        save_model=None,
         wandb=False,
     )
     # =================================
