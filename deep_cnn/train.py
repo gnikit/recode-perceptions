@@ -204,15 +204,12 @@ def train(
             # )
 
     if save_model is not None:
-        if "test" in str(save_model):
-            pass
-        else:
-            state = {
-                "epoch": epochs,
-                "state_dict": model.state_dict(),
-                "optimizer": optimizer.state_dict(),
-            }
-            torch.save(state, save_model)
+        state = {
+            "epoch": epochs,
+            "state_dict": model.state_dict(),
+            "optimizer": optimizer.state_dict(),
+        }
+        torch.save(state, save_model)
 
     # Return the filled results at the end of the epochs
     return results

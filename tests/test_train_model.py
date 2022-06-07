@@ -1,4 +1,4 @@
-# from unittest.mock import patch
+from unittest.mock import patch
 
 from deep_cnn.utils import argument_parser
 
@@ -17,5 +17,7 @@ def test_train_model(root_dir, test_data, metadata):
         ]
     )
 
-    # with patch("deep_cnn.utils.argument_parser") as mock_arg_parser:
-    main(opt)
+    with patch("torch.save") as mock_save:
+        main(opt)
+
+    mock_save.assert_called()
