@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,14 +7,20 @@ import pandas as pd
 
 
 def pp_process_input(
-    perception_study: str, root_dir: str, data_dir: str, oversample: bool, verbose: bool
+    root_dir: str,
+    data_dir: str,
+    metadata: str,
+    oversample: bool,
+    verbose: bool,
+    perception_study: str,
 ):
-
     """
     Load place pulse image metadata and format for dataloader
     """
-    images_df = create_image_df(root_dir, data_dir)  # read image names
-    images_df = add_qscore(root_dir, images_df, perception_study)  # get outcome labels
+    images_df = create_image_df(data_dir)  # read image names
+    images_df = add_qscore(
+        root_dir, images_df, perception_study, metadata
+    )  # get outcome labels
     images_df = scale_data(images_df, 1, 10)  # scale outcome label
 
     # split train, val, test
@@ -41,6 +48,9 @@ def split_meta(images_df, train_size, val_size, test_size):
     df_val = df_.sample(frac=0.07)
     df_train = df_.drop(df_val.index)
     df_test = images_df.drop(df_train.index)
+    print("There are %s images in the original training set" % str(df_train.shape[0]))
+    print("There were %s images in the original validation set" % str(df_val.shape[0]))
+    print("There were %s images in the original test set" % str(df_test.shape[0]))
     return df_train, df_val, df_test
 
 
@@ -51,21 +61,25 @@ def get_image_id(f):
     return id
 
 
-def create_image_df(root_dir, data_dir):
+def create_image_df(data_dir):
     """DataFrame of image names (as found in metadata.csv)
     and location of image file"""
-    path = root_dir + data_dir
-    files = os.listdir(path)
+    files = os.listdir(data_dir)
+    print(files)
     img_id = get_image_id(files)
     df_img = pd.DataFrame({"file": files, "location_id": img_id})
     return df_img
 
 
 def add_qscore(
-    root_dir, images_df, perception_study, metadata="input/meta/qscores.tsv"
+    root_dir,
+    images_df,
+    perception_study,
+    metadata,
 ):
     """Read in metadata to add qscore label to image dataframe"""
-    meta = pd.read_csv(root_dir + metadata, sep="\t")
+    meta_path = str(Path(root_dir, metadata)) + "/qscores.tsv"
+    meta = pd.read_csv(meta_path, sep="\t")
     perception_meta = meta[meta["study_id"] == perception_study]
     images_df.insert(
         0,
@@ -96,7 +110,9 @@ def oversample_images(df_train):
     for class_idx, group in df_train.groupby("bins"):
         oversample_class = group.sample(M - len(group), replace=True)
         frames = pd.concat([frames, oversample_class])
-    print("There were %s images in the original training set" % str(df_train.shape[0]))
     df_train = pd.concat([frames, df_train])
-    print("There are now %s images in the training dataset" % str(df_train.shape[0]))
+    print(
+        "After oversampling, there are now %s images in the training dataset"
+        % str(df_train.shape[0])
+    )
     return df_train

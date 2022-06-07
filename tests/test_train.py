@@ -1,38 +1,51 @@
+from pathlib import Path
+
+import numpy as np
 import torch
-
-from train.model_builder import MyCNN
-
-# def test_preprocessing_pp():
-#     """Test split size
-#     """
-#     df_train, df_val, df_test = datautils.pp_process_input(
-#         "50a68a51fdc9f05596000002",
-#         os.path.dirname(os.getcwd()),
-#         "input/images/",
-#         oversample=True,
-#         verbose=True,
-#     )
+import torch.nn as nn
 
 
-# def test_dataset_generator():
-#     """Test pre-processing in [0,1]
-#     and correct image labels"""
+def test_training_epoch(root_dir, test_data, study, params, metadata):
+    """tests dataset iterator"""
+    import deep_cnn.train as train
+    from deep_cnn.dataset_generator import dataloader
+    from deep_cnn.datautils import pp_process_input
+    from deep_cnn.model_builder import MyCNN
 
-
-def test_model_builder():
-    """Test random input
-    passes through network
-    and output shape is 2"""
+    df_train, df_val, _ = pp_process_input(
+        root_dir=root_dir,
+        data_dir=test_data,
+        metadata=metadata,
+        oversample=False,
+        verbose=False,
+        perception_study=study,
+    )
+    train_dataloader = dataloader(
+        df_train, Path(root_dir, test_data), "resnet", "train", params
+    )
+    val_dataloader = dataloader(
+        df_val, Path(root_dir, test_data), "resnet", "val", params
+    )
     model = MyCNN()
-    x = torch.randn(2, 3, 224, 224)
-    out = model(x)
+
+    optimizer = torch.optim.Adam(model.parameters(), 0.001)
+    loss_fn = nn.MSELoss()
+
+    train_val_loss = train.train(
+        model=model,
+        train_dataloader=train_dataloader,
+        val_dataloader=val_dataloader,
+        optimizer=optimizer,
+        scheduler=None,
+        loss_fn=loss_fn,
+        epochs=1,
+        device="cpu",
+        save_model=None,
+        wandb=False,
+    )
     # =================================
     # TEST SUITE
     # =================================
-    # Check the length of the returned object
-    assert len(out) == 2
-
-
-# def test_one_training_epoch():
-#     """Tests one forward and on backward pass
-#     """
+    # Check train loss is not none and val loss is np.nan
+    assert train_val_loss["train_loss"][0] != np.nan
+    assert train_val_loss["val_loss"][0] is np.nan
