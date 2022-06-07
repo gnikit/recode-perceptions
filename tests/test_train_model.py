@@ -15,6 +15,7 @@ def test_train_model(root_dir, test_data, metadata):
             "--batch_size=1",
             "--oversample=False",
             "--run_name=test",
+            "--verbose=False",
         ]
     )
 

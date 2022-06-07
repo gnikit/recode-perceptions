@@ -30,7 +30,7 @@ def main(opt):
         data_dir=opt.data_dir,
         metadata=opt.metadata,
         oversample=opt.oversample,
-        verbose=True,
+        verbose=opt.verbose,
     )
 
     # create dataloaders

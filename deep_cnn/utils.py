@@ -39,6 +39,7 @@ def argument_parser(args=None):
     )
     parser.add_argument("--data_dir", default="input/images/", type=str, help="dataset")
     parser.add_argument("--metadata", default="input/meta/", type=str, help="dataset")
+    parser.add_argument("--verbose", default=True, type=bool, help="intermed. outputs")
     return parser.parse_args(args)
 
 
