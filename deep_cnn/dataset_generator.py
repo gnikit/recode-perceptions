@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import torch
 import torchvision.transforms as transforms
@@ -27,7 +29,7 @@ class CustomImageDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path = self.img_dir.iloc[idx]["file"]  # locates filename for next image
-        image = read_image(self.root + img_path)  # loads image to memory
+        image = read_image(str(Path(self.root, img_path)))  # loads image to memory
         label = self.img_dir.iloc[idx]["trueskill.score_norm"]  # gets outcome label
         if self.transform:
             image = self.transform(image)
@@ -63,9 +65,12 @@ def dataloader(df, root_dir, transform, split, params):
     and creates Dataset Iterator
     wrapped in dataloader"""
     dataset_iterator = CustomImageDataset(df, root_dir, transform)
-    dataloader = DataLoader(dataset_iterator, **params)
-    print(
-        "There are %s images in the %s DataLoader"
-        % (str(dataloader.__len__() * params["batch_size"]), split)
-    )
+    if dataset_iterator.__len__() == 0:
+        dataloader = None
+    else:
+        dataloader = DataLoader(dataset_iterator, **params)
+        print(
+            "There are %s images in the %s DataLoader"
+            % (str(dataloader.__len__() * params["batch_size"]), split)
+        )
     return dataloader

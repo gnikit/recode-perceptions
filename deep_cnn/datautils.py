@@ -7,7 +7,11 @@ import pandas as pd
 
 
 def pp_process_input(
-    perception_study: str, root_dir: str, data_dir: str, oversample: bool, verbose: bool
+    root_dir: str,
+    data_dir: str,
+    oversample: bool,
+    verbose: bool,
+    perception_study: str,
 ):
     """
     Load place pulse image metadata and format for dataloader
@@ -58,6 +62,7 @@ def create_image_df(data_dir):
     """DataFrame of image names (as found in metadata.csv)
     and location of image file"""
     files = os.listdir(data_dir)
+    print(files)
     img_id = get_image_id(files)
     df_img = pd.DataFrame({"file": files, "location_id": img_id})
     return df_img
@@ -66,7 +71,7 @@ def create_image_df(data_dir):
 def add_qscore(
     root_dir,
     images_df,
-    perception_study="50a68a51fdc9f05596000002",
+    perception_study,
     metadata="input/meta/qscores.tsv",
 ):
     """Read in metadata to add qscore label to image dataframe"""

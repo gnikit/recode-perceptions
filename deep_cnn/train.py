@@ -1,3 +1,6 @@
+from typing import Dict
+
+import numpy as np
 import torch
 from tqdm import tqdm
 
@@ -33,36 +36,41 @@ def train_step(
     running_loss = 0
 
     # loop over training batches using timer tqdm
-    with tqdm(train_dataloader, unit="batch") as tepoch:
-        for data, target in tepoch:
-            tepoch.set_description(f"Epoch {epoch}")
+    if train_dataloader is not None:
+        with tqdm(train_dataloader, unit="batch") as tepoch:
+            for data, target in tepoch:
+                tepoch.set_description(f"Epoch {epoch}")
 
-            # Format expected input dimensions and send data to device
-            train_x = data.to(device)
-            y = target.unsqueeze(dim=1).to(device)
+                # Format expected input dimensions and send data to device
+                train_x = data.to(device)
+                y = target.unsqueeze(dim=1).to(device)
 
-            # 1. Forward Pass
-            output = model.forward(train_x)
+                # 1. Forward Pass
+                output = model.forward(train_x)
 
-            # 2. Calculate and accumulate loss
-            loss = loss_fn(output.float(), y.float())
-            running_loss += loss.detach().item()
+                # 2. Calculate and accumulate loss
+                loss = loss_fn(output.float(), y.float())
+                running_loss += loss.detach().item()
 
-            # 3. Optimzer zero grad
-            optimizer.zero_grad(set_to_none=False)
+                # 3. Optimzer zero grad
+                optimizer.zero_grad(set_to_none=False)
 
-            # 4. Loss backprop
-            loss.backward()
+                # 4. Loss backprop
+                loss.backward()
 
-            # 5. Optimizer step
-            optimizer.step()
-            tepoch.set_postfix(loss=loss.detach().item())
+                # 5. Optimizer step
+                optimizer.step()
+                tepoch.set_postfix(loss=loss.detach().item())
 
-    # 6. Optimizer Step
-    scheduler.step()
+        # 6. Optimizer Step
+        if scheduler is not None:
+            scheduler.step()
 
-    # Adjust metrics to get average loss per batch
-    avg_train_loss = running_loss / (len(train_dataloader))
+        # Adjust metrics to get average loss per batch
+        avg_train_loss = running_loss / (len(train_dataloader))
+
+    else:
+        avg_train_loss = np.nan
     return avg_train_loss
 
 
@@ -89,21 +97,24 @@ def test_step(
     running_loss = 0
 
     # loop over val/test batches
-    for i, data in enumerate(test_dataloader):
-        # Format expected input dimensions and send data to device
-        test_x = data[0].to(device)
+    if test_dataloader is not None:
+        for i, data in enumerate(test_dataloader):
+            # Format expected input dimensions and send data to device
+            test_x = data[0].to(device)
 
-        y = data[1].unsqueeze(dim=1).to(device)
+            y = data[1].unsqueeze(dim=1).to(device)
 
-        # 1. Forward Pass
-        output = model.forward(test_x)
+            # 1. Forward Pass
+            output = model.forward(test_x)
 
-        # 2. Calculate and accumulate loss
-        loss = loss_fn(output.float(), y.float())
-        running_loss += loss.detach().item()
+            # 2. Calculate and accumulate loss
+            loss = loss_fn(output.float(), y.float())
+            running_loss += loss.detach().item()
 
-    # Adjust metrics to get average loss and accuracy per batch
-    avg_test_loss = running_loss / (len(test_dataloader))
+        # Adjust metrics to get average loss and accuracy per batch
+        avg_test_loss = running_loss / (len(test_dataloader))
+    else:
+        avg_test_loss = np.nan
     return avg_test_loss
 
 
@@ -146,10 +157,14 @@ def train(
               val_loss: [1.2641, 1.5706],
     """
     # Create empty results dictionary
-    results = {
-        "train_loss": [float],
-        "val_loss": [float],
-    }
+    # results = {
+    #     "train_loss": [float],
+    #     "val_loss": [float],
+    # }
+    # Create empty results dictionary
+    results: Dict[str, list] = {}
+    results["train_loss"] = []
+    results["val_loss"] = []
 
     # Loop through training and testing steps for a number of epochs
     for epoch in range(epochs):
@@ -162,6 +177,7 @@ def train(
             scheduler=scheduler,
             device=device,
         )
+
         print("Calculating validation loss")
         val_loss = test_step(
             model=model, test_dataloader=val_dataloader, loss_fn=loss_fn, device=device
@@ -193,7 +209,7 @@ def train(
             "state_dict": model.state_dict(),
             "optimizer": optimizer.state_dict(),
         }
-        torch.save(state, save_model + ".pt")
+        torch.save(state, save_model)
 
     # Return the filled results at the end of the epochs
     return results

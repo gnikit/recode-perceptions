@@ -1,9 +1,11 @@
+import argparse
 from pathlib import Path
 
 import torch
 
 
-def argument_parser(parser):
+def argument_parser(args=None):
+    parser = argparse.ArgumentParser()
     parser.add_argument(
         "--epochs", default=20, type=int, help="number of training epochs"
     )
@@ -36,7 +38,7 @@ def argument_parser(parser):
         help="unique name to identify hyperparameter choices",
     )
     parser.add_argument("--data_dir", default="input/images/", type=str, help="dataset")
-    return parser.parse_args()
+    return parser.parse_args(args)
 
 
 def detect_device():

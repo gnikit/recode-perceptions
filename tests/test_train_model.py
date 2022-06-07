@@ -1,10 +1,23 @@
-# from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-# def test_main(test_data):
-#     from train.train_model import main
+from deep_cnn.utils import argument_parser
 
-#     # mock_pp_process_input = MagicMock(return_value=patched_value)
-#     with patch("train.datautils.pp_process_input") as mock_pp_process_input:
-#         main()
 
-#     mock_pp_process_input.assert_called()
+def test_train_model(root_dir, test_data):
+    from deep_cnn.train_model import main
+
+    opt = argument_parser(
+        [
+            "--root_dir=" + str(root_dir) + "/",
+            "--data_dir=" + str(test_data) + "/",
+            "--epochs=1",
+            "--batch_size=1",
+            "--oversample=False",
+            "--run_name=test",
+        ]
+    )
+
+    with patch("deep_cnn.utils.argument_parser") as mock_arg_parser:
+        main(opt)
+
+    mock_arg_parser.assert_called()

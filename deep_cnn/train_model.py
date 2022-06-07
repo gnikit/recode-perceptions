@@ -1,23 +1,20 @@
-import argparse
+import sys
+from pathlib import Path
 from timeit import default_timer as timer
 
-import datautils as datautils
 import torch
 import torch.nn as nn
-from dataset_generator import dataloader
-from model_builder import MyCNN
-from utils import argument_parser, detect_device
 
-import train
+import deep_cnn.datautils as datautils
+import deep_cnn.train as train
+from deep_cnn.dataset_generator import dataloader
+from deep_cnn.model_builder import MyCNN
+from deep_cnn.utils import argument_parser, detect_device
 
 # import wandb
 
 
-def main():
-    # parse arguments
-    parser = argparse.ArgumentParser()
-    opt = argument_parser(parser)
-
+def main(opt):
     # detect devices
     device = detect_device()
 
@@ -28,9 +25,9 @@ def main():
 
     # load image metadata
     df_train, df_val, df_test = datautils.pp_process_input(
-        opt.study_id,
-        opt.root_dir,
-        opt.data_dir,
+        perception_study=opt.study_id,
+        root_dir=opt.root_dir,
+        data_dir=opt.data_dir,
         oversample=opt.oversample,
         verbose=True,
     )
@@ -43,15 +40,9 @@ def main():
         "pin_memory": True,
         "drop_last": False,
     }
-    train_dataloader = dataloader(
-        df_train, opt.root_dir + opt.data_dir, opt.pre, "train", params
-    )
-    validation_dataloader = dataloader(
-        df_val, opt.root_dir + opt.data_dir, opt.pre, "val", params
-    )
-    test_dataloader = dataloader(
-        df_test, opt.root_dir + opt.data_dir, opt.pre, "test", params
-    )
+    train_dataloader = dataloader(df_train, opt.data_dir, opt.pre, "train", params)
+    validation_dataloader = dataloader(df_val, opt.data_dir, opt.pre, "val", params)
+    test_dataloader = dataloader(df_test, opt.data_dir, opt.pre, "test", params)
 
     # initialise model
     model = MyCNN()
@@ -81,7 +72,7 @@ def main():
         loss_fn=loss_fn,
         epochs=opt.epochs,
         device=device,
-        save_model=opt.root_dir + "outputs/models/" + opt.run_name,
+        save_model=Path(opt.root_dir, "outputs/models/", opt.run_name + ".pt"),
         wandb=False,
     )
 
@@ -106,9 +97,9 @@ def main():
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # opt = argument_parser(parser)
-    main()
+    # parse arguments
+    opt = argument_parser(sys.argv[1:])
+    main(opt)
 
 # PLOTS
 # plot training loss
