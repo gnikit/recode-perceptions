@@ -11,14 +11,14 @@ def test_image_dataframe(test_data):
     assert test_image_df.shape == (2, 2)
 
 
-def test_adding_labels(root_dir, test_data, study):
+def test_adding_labels(root_dir, test_data, study, metadata):
     """Test outcome scores are added"""
     test_image_df = create_image_df(data_dir=test_data)
     labels_df = add_qscore(
         root_dir=root_dir,
         images_df=test_image_df,
         perception_study=study,
-        metadata="tests/test_input/meta/qscores.tsv",
+        metadata=metadata,
     )
     # =================================
     # TEST SUITE
@@ -28,14 +28,14 @@ def test_adding_labels(root_dir, test_data, study):
     assert test_image_df.shape == (2, 3)
 
 
-def test_scale_scores(root_dir, test_data, study):
+def test_scale_scores(root_dir, test_data, study, metadata):
     """Test outcome scores are added"""
     test_image_df = create_image_df(data_dir=test_data)
     labels_df = add_qscore(
         root_dir=root_dir,
         images_df=test_image_df,
         perception_study=study,
-        metadata="tests/test_input/meta/qscores.tsv",
+        metadata=metadata,
     )
     images_df = scale_data(labels_df, 1, 10)
     # =================================
@@ -45,14 +45,14 @@ def test_scale_scores(root_dir, test_data, study):
     assert images_df["trueskill.score_norm"].between(0, 10).all()
 
 
-def test_split_meta(root_dir, test_data, study):
+def test_split_meta(root_dir, test_data, study, metadata):
     """Test outcome scores are added"""
     test_image_df = create_image_df(data_dir=test_data)
     labels_df = add_qscore(
         root_dir=root_dir,
         images_df=test_image_df,
         perception_study=study,
-        metadata="tests/test_input/meta/qscores.tsv",
+        metadata=metadata,
     )
     images_df = scale_data(labels_df, 1, 10)
     df_train, df_val, df_test = split_meta(images_df, 0.5, 0.00, 0.5)

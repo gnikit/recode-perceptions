@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 
-def test_training_epoch(root_dir, test_data, study, params):
+def test_training_epoch(root_dir, test_data, study, params, metadata):
     """tests dataset iterator"""
     import deep_cnn.train as train
     from deep_cnn.dataset_generator import dataloader
@@ -15,6 +15,7 @@ def test_training_epoch(root_dir, test_data, study, params):
     df_train, df_val, _ = pp_process_input(
         root_dir=root_dir,
         data_dir=test_data,
+        metadata=metadata,
         oversample=False,
         verbose=False,
         perception_study=study,

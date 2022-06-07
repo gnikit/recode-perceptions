@@ -14,6 +14,11 @@ def root_dir():
 
 
 @pytest.fixture
+def metadata():
+    return "tests/test_input/meta/"
+
+
+@pytest.fixture
 def study():
     return "50a68a51fdc9f05596000002"
 

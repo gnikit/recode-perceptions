@@ -38,6 +38,7 @@ def argument_parser(args=None):
         help="unique name to identify hyperparameter choices",
     )
     parser.add_argument("--data_dir", default="input/images/", type=str, help="dataset")
+    parser.add_argument("--metadata", default="input/meta/", type=str, help="dataset")
     return parser.parse_args(args)
 
 

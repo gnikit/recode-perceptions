@@ -9,6 +9,7 @@ import pandas as pd
 def pp_process_input(
     root_dir: str,
     data_dir: str,
+    metadata: str,
     oversample: bool,
     verbose: bool,
     perception_study: str,
@@ -17,7 +18,9 @@ def pp_process_input(
     Load place pulse image metadata and format for dataloader
     """
     images_df = create_image_df(data_dir)  # read image names
-    images_df = add_qscore(root_dir, images_df, perception_study)  # get outcome labels
+    images_df = add_qscore(
+        root_dir, images_df, perception_study, metadata
+    )  # get outcome labels
     images_df = scale_data(images_df, 1, 10)  # scale outcome label
 
     # split train, val, test
@@ -72,10 +75,10 @@ def add_qscore(
     root_dir,
     images_df,
     perception_study,
-    metadata="input/meta/qscores.tsv",
+    metadata,
 ):
     """Read in metadata to add qscore label to image dataframe"""
-    meta_path = Path(root_dir, metadata)
+    meta_path = str(Path(root_dir, metadata)) + "/qscores.tsv"
     meta = pd.read_csv(meta_path, sep="\t")
     perception_meta = meta[meta["study_id"] == perception_study]
     images_df.insert(

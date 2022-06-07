@@ -28,6 +28,7 @@ def main(opt):
         perception_study=opt.study_id,
         root_dir=opt.root_dir,
         data_dir=opt.data_dir,
+        metadata=opt.metadata,
         oversample=opt.oversample,
         verbose=True,
     )

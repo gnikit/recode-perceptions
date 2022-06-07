@@ -1,4 +1,4 @@
-def test_dataset_generator(root_dir, test_data, study, params):
+def test_dataset_generator(root_dir, test_data, metadata, study, params):
     """tests dataset iterator"""
     from deep_cnn.dataset_generator import dataloader
     from deep_cnn.datautils import pp_process_input
@@ -6,6 +6,7 @@ def test_dataset_generator(root_dir, test_data, study, params):
     df_train, _, _ = pp_process_input(
         root_dir=root_dir,
         data_dir=test_data,
+        metadata=metadata,
         oversample=False,
         verbose=False,
         perception_study=study,
