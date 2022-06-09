@@ -32,7 +32,8 @@ python train_model.py                   \
 --lr=1e-3                               \
 --study_id='50a68a51fdc9f05596000002'   \
 --data_dir='input/test_images/'         \
---root_dir='/tf/misc/recode/'
+--root_dir='/tf/misc/recode/'           \
+--metadata=''
 ```
 
 You should see the following output ... The model has been trained, but for only one epoch. What do you notice about the test accuracy after just one epoch? Let's now migrate the programme to the HPC so we can utilise the GPUs available for faster implementation.

@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 import numpy as np
@@ -5,6 +6,8 @@ import torch
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader, Dataset
 from torchvision.io import read_image
+
+logger = logging.getLogger("testing")
 
 
 class CustomImageDataset(Dataset):
@@ -69,7 +72,7 @@ def dataloader(df, root_dir, transform, split, params):
         dataloader = None
     else:
         dataloader = DataLoader(dataset_iterator, **params)
-        print(
+        logger.info(
             "There are %s images in the %s DataLoader"
             % (str(dataloader.__len__() * params["batch_size"]), split)
         )

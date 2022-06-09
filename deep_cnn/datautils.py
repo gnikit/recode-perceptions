@@ -1,9 +1,12 @@
+import logging
 import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger("testing")
 
 
 def pp_process_input(
@@ -48,9 +51,13 @@ def split_meta(images_df, train_size, val_size, test_size):
     df_val = df_.sample(frac=0.07)
     df_train = df_.drop(df_val.index)
     df_test = images_df.drop(df_train.index)
-    print("There are %s images in the original training set" % str(df_train.shape[0]))
-    print("There were %s images in the original validation set" % str(df_val.shape[0]))
-    print("There were %s images in the original test set" % str(df_test.shape[0]))
+    logger.info(
+        "There are %s images in the original training set" % str(df_train.shape[0])
+    )
+    logger.info(
+        "There were %s images in the original validation set" % str(df_val.shape[0])
+    )
+    logger.info("There were %s images in the original test set" % str(df_test.shape[0]))
     return df_train, df_val, df_test
 
 
@@ -65,7 +72,7 @@ def create_image_df(data_dir):
     """DataFrame of image names (as found in metadata.csv)
     and location of image file"""
     files = os.listdir(data_dir)
-    print(files)
+    logger.info(files)
     img_id = get_image_id(files)
     df_img = pd.DataFrame({"file": files, "location_id": img_id})
     return df_img
@@ -111,7 +118,7 @@ def oversample_images(df_train):
         oversample_class = group.sample(M - len(group), replace=True)
         frames = pd.concat([frames, oversample_class])
     df_train = pd.concat([frames, df_train])
-    print(
+    logger.info(
         "After oversampling, there are now %s images in the training dataset"
         % str(df_train.shape[0])
     )

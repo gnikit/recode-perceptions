@@ -1,12 +1,16 @@
+import logging
+import os
 import sys
 from pathlib import Path
 from timeit import default_timer as timer
 
+sys.path.append(os.getcwd())
+
 import torch
 import torch.nn as nn
 
-import deep_cnn.datautils as datautils
 import deep_cnn.train as train
+from deep_cnn import datautils
 from deep_cnn.dataset_generator import dataloader
 from deep_cnn.model_builder import MyCNN
 from deep_cnn.utils import argument_parser, detect_device
@@ -48,7 +52,7 @@ def main(opt):
     # initialise model
     model = MyCNN()
     model.to(device)
-    print("Model loaded with %s parameters" % str(model.count_params()))
+    logger.info("Model loaded with %s parameters" % str(model.count_params()))
 
     # Set up Loss and Optimizer
     optimizer = torch.optim.Adam(model.parameters(), opt.lr)
@@ -77,9 +81,9 @@ def main(opt):
         wandb=False,
     )
 
-    # End the timer and print out how long it took
+    # End the timer and logger.info out how long it took
     end_time = timer()
-    print(f"Model trained in: {end_time-start_time:.3f} seconds")
+    logger.info(f"Model trained in: {end_time-start_time:.3f} seconds")
 
     # Get Test Performance
     test_loss = train.test_step(
@@ -88,9 +92,9 @@ def main(opt):
         loss_fn=loss_fn,
         device=device,
     )
-    print(f"Model tested in: {timer()-end_time:.3f} seconds")
+    logger.info(f"Model tested in: {timer()-end_time:.3f} seconds")
 
-    print(
+    logger.info(
         "LOSS train {} valid {} test {}".format(
             train_val_loss["train_loss"][-1], train_val_loss["val_loss"][-1], test_loss
         )
@@ -100,6 +104,14 @@ def main(opt):
 if __name__ == "__main__":
     # parse arguments
     opt = argument_parser(sys.argv[1:])
+
+    # logging config
+    logger = logging.getLogger("testing")
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(os.getcwd() + "/outputs/logger/%s.log" % opt.run_name)
+    logger.addHandler(handler)
+    logger.info("Model running with parameters: %s" % opt)
+
     main(opt)
 
 # PLOTS
@@ -116,4 +128,5 @@ if __name__ == "__main__":
 # prediction_hist(y.flatten(), y_true.flatten(), opt.model + '
 # _epochs_' + str(opt.epochs) + '_lr_' + str(opt.lr)  + str(opt.oversample)
 #  + str(opt.study_id), opt.prefix )
-# print('LOSS train {} valid {} test {}'.format(avg_tloss, avg_vloss, avg_testloss))
+# logger.info('LOSS train {} valid {} test {}'
+# .format(avg_tloss, avg_vloss, avg_testloss))
