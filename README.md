@@ -18,6 +18,12 @@ This model is trained on 70K images with associated perception scores to be able
 
 Clone this repository into your local drive. root_dir will now refer to the /local_path/to_this/directory/recode-perceptions.
 
+```sh
+git clone
+cd recode-perceptions
+pip install -r requirements.txt
+```
+
 ### Installation
 
 We assume that you're using Python 3.7 with pip installed.
@@ -42,20 +48,34 @@ Let's configure our environment by installing all the necessary packages located
 pip install -r requirements.txt
 ```
 
+The final command requires you to have python installed and will install all the packages contained within the requirements.txt file. If an error occurs at this stage, don't panic! Often, this will be a result of python version conflict for a certain package/packages. Make sure that python3.7 version is being used.
+
 ### Dataset
 
-The dataset can be downloaded from dropbox. Run wget (below) to downloads all of the Place Pulse images (~3GB) and put them in the input/images/ directory:
+The dataset can be downloaded from dropbox. Run wget (below) to download all of the Place Pulse images (~3GB) and put them in the input/images/ directory:
 
 ```
-wget -O /root/recode/input/images.zip https://www.dropbox.com/s/grzoiwsaeqrmc1l/place-pulse-2.0.zip?dl=1
+wget -O /root_dir/recode/input/images.zip https://www.dropbox.com/s/grzoiwsaeqrmc1l/place-pulse-2.0.zip?dl=1
 ```
 
-where root is the path to the recode repository. Unzip/extract all files in the same location
+where root_dir is the path to the recode repository. Unzip/extract all files in the same location
 
 ```
 unzip images.zip
 ```
 
-In addition, unzip input/meta.zip to extract the label information.
+In addition, unzip input/meta.zip to extract the label information. The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Place Pulse](https://arxiv.org/pdf/1608.01769.pdf).
+
+### Testing
+
+To run all tests, install pytest. After installing, run
+
+```
+pytest tests/ -v
+```
+
+### License
+
+This code and the pretrained model is licensed under the MIT license.
 
 
