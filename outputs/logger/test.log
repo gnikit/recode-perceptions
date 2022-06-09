@@ -1,0 +1,13 @@
+Model running with parameters: Namespace(batch_size=1, data_dir='/home/emily/phd/misc/recode/tests/test_input/test_images/', epochs=1, lr=0.001, metadata='tests/test_input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+['-19.818072_-43.951946_513d5c7afdc9f03587003718_BeloHorizonte.JPG', '-19.882689_-44.032458_513d61e8fdc9f03587003edd_BeloHorizonte.JPG']
+There are 1 images in the original training set
+There were 0 images in the original validation set
+There were 1 images in the original test set
+There are 1 images in the train DataLoader
+There are 1 images in the test DataLoader
+Model loaded with 94012481 parameters
+Calculating validation loss
+Epoch: 1 | train_loss: 104.3685 | val_loss: nan | 
+Model trained in: 0.442 seconds
+Model tested in: 0.163 seconds
+LOSS train 104.36847686767578 valid nan test 0.9956909418106079

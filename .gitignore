@@ -6,6 +6,7 @@ input/places365standard_easyformat
 outputs/
 venv/
 model/
+deep_cnn/logging.conf
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
