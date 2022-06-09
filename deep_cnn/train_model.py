@@ -16,9 +16,18 @@ from deep_cnn.model_builder import MyCNN
 from deep_cnn.utils import argument_parser, detect_device
 
 # import wandb
+# logging config
+logger = logging.getLogger("testing")
+logger.setLevel(logging.INFO)
 
 
 def main(opt):
+
+    # log output
+    handler = logging.FileHandler(os.getcwd() + "/outputs/logger/%s.log" % opt.run_name)
+    logger.addHandler(handler)
+    logger.info("Model running with parameters: %s" % opt)
+
     # detect devices
     device = detect_device()
 
@@ -104,13 +113,6 @@ def main(opt):
 if __name__ == "__main__":
     # parse arguments
     opt = argument_parser(sys.argv[1:])
-
-    # logging config
-    logger = logging.getLogger("testing")
-    logger.setLevel(logging.INFO)
-    handler = logging.FileHandler(os.getcwd() + "/outputs/logger/%s.log" % opt.run_name)
-    logger.addHandler(handler)
-    logger.info("Model running with parameters: %s" % opt)
 
     main(opt)
 
