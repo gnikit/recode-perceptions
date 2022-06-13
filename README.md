@@ -18,6 +18,12 @@ This model is trained on 70K images with associated perception scores to be able
 
 Clone this repository into your local drive. root_dir will now refer to the /local_path/to_this/directory/recode-perceptions.
 
+```sh
+git clone
+cd recode-perceptions
+pip install -r requirements.txt
+```
+
 ### Installation
 
 We assume that you're using Python 3.7 with pip installed.
@@ -41,6 +47,8 @@ Let's configure our environment by installing all the necessary packages located
 ```
 pip install -r requirements.txt
 ```
+
+The final command requires you to have python installed and will install all the packages contained within the requirements.txt file. If an error occurs at this stage, don't panic! Often, this will be a result of python version conflict for a certain package/packages. Make sure that python3.7 version is being used.
 
 ### Dataset
 
