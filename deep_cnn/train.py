@@ -1,11 +1,11 @@
-import logging
 from typing import Dict
 
 import numpy as np
 import torch
 from tqdm import tqdm
 
-logger = logging.getLogger("testing")
+from .logger import logger
+
 """
 Contains functions for training and testing a PyTorch model.
 """

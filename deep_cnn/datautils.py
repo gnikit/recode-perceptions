@@ -1,4 +1,3 @@
-import logging
 import os
 from pathlib import Path
 
@@ -6,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-logger = logging.getLogger("testing")
+from .logger import logger
 
 
 def pp_process_input(
@@ -72,7 +71,6 @@ def create_image_df(data_dir):
     """DataFrame of image names (as found in metadata.csv)
     and location of image file"""
     files = os.listdir(data_dir)
-    logger.info(files)
     img_id = get_image_id(files)
     df_img = pd.DataFrame({"file": files, "location_id": img_id})
     return df_img
