@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+from .logger import logger
+
 """
 Contains functions for training and testing a PyTorch model.
 """
@@ -178,13 +180,13 @@ def train(
             device=device,
         )
 
-        print("Calculating validation loss")
+        logger.info("Calculating validation loss")
         val_loss = test_step(
             model=model, test_dataloader=val_dataloader, loss_fn=loss_fn, device=device
         )
 
-        # Print out what's happening
-        print(
+        # print out what's happening
+        logger.info(
             f"Epoch: {epoch+1} | "
             f"train_loss: {train_loss:.4f} | "
             f"val_loss: {val_loss:.4f} | "
