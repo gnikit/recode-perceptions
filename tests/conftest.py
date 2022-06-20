@@ -5,7 +5,7 @@ import pytest
 
 @pytest.fixture
 def test_data():
-    return Path(__file__).parent / "test_input/test_images"
+    return "tests/places_test_input"
 
 
 @pytest.fixture
@@ -27,7 +27,7 @@ def study():
 def params():
     return {
         "batch_size": 1,
-        "shuffle": True,
+        "shuffle": False,
         "num_workers": 1,
         "pin_memory": True,
         "drop_last": False,

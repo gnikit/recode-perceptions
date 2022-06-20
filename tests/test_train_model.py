@@ -4,7 +4,7 @@ from unittest.mock import patch
 from deep_cnn.utils import argument_parser
 
 
-def test_train_model(root_dir, test_data, metadata, caplog):
+def test_train_model(root_dir, test_data, caplog):
     caplog.set_level(logging.INFO)
     from deep_cnn.train_model import main
 
@@ -12,10 +12,9 @@ def test_train_model(root_dir, test_data, metadata, caplog):
         [
             "--root_dir=" + str(root_dir) + "/",
             "--data_dir=" + str(test_data) + "/",
-            "--metadata=" + str(metadata),
             "--epochs=1",
             "--batch_size=1",
-            "--run_name=test",
+            "--run_name=places",
         ]
     )
 

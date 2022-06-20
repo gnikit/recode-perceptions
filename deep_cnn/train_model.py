@@ -4,11 +4,11 @@ from timeit import default_timer as timer
 import torch
 import torch.nn as nn
 
-from . import datautils, train
+from . import train
 from .dataset_generator import dataloader
 from .logger import logger
 from .model_builder import MyCNN
-from .utils import detect_device
+from .utils import detect_device, output_plots
 
 # import wandb
 # logging config
@@ -23,20 +23,10 @@ def main(opt):
     # detect devices
     device = detect_device()
 
-    # # WANDB for HO
+    # WANDB for HO
     # id = '%s' % opt.wandb_name
     # wandb.login(key='')
     # wandb.init(id = id, project='place_pulse_phd', entity='emilymuller1991')
-
-    # load image metadata
-    df_train, df_val, df_test = datautils.pp_process_input(
-        perception_study=opt.study_id,
-        root_dir=opt.root_dir,
-        data_dir=opt.data_dir,
-        metadata=opt.metadata,
-        oversample=opt.oversample,
-        verbose=opt.verbose,
-    )
 
     # create dataloaders
     params = {
@@ -46,12 +36,16 @@ def main(opt):
         "pin_memory": True,
         "drop_last": False,
     }
-    train_dataloader = dataloader(df_train, opt.data_dir, opt.pre, "train", params)
-    validation_dataloader = dataloader(df_val, opt.data_dir, opt.pre, "val", params)
-    test_dataloader = dataloader(df_test, opt.data_dir, opt.pre, "test", params)
+    train_dataloader, N = dataloader(
+        opt.data_dir, opt.root_dir, opt.pre, "train", params
+    )
+    validation_dataloader, _ = dataloader(
+        opt.data_dir, opt.root_dir, opt.pre, "val", params
+    )
+    test_dataloader, _ = dataloader(opt.data_dir, opt.root_dir, opt.pre, "test", params)
 
     # initialise model
-    model = MyCNN()
+    model = MyCNN(n_classes=N)
     model.to(device)
     logger.info("Model loaded with %s parameters" % str(model.count_params()))
 
@@ -63,7 +57,7 @@ def main(opt):
         return opt.lr * 1 / (1.0 + (opt.lr / opt.epochs) * epoch)
 
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda_decay)
-    loss_fn = nn.MSELoss()
+    loss_fn = nn.CrossEntropyLoss()
 
     # Start the timer
     start_time = timer()
@@ -81,6 +75,7 @@ def main(opt):
         save_model=Path(opt.root_dir, "outputs/models/", opt.run_name + ".pt"),
         wandb=False,
     )
+    output_plots(train_val_loss, opt.root_dir, opt.run_name)
 
     # End the timer and logger.info out how long it took
     end_time = timer()

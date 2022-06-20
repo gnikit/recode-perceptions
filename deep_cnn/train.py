@@ -5,6 +5,7 @@ import torch
 from tqdm import tqdm
 
 from .logger import logger
+from .utils import accuracy
 
 """
 Contains functions for training and testing a PyTorch model.
@@ -45,14 +46,16 @@ def train_step(
 
                 # Format expected input dimensions and send data to device
                 train_x = data.to(device)
-                y = target.unsqueeze(dim=1).to(device)
+                y = target.to(device)
 
                 # 1. Forward Pass
                 output = model.forward(train_x)
 
-                # 2. Calculate and accumulate loss
-                loss = loss_fn(output.float(), y.float())
+                # 2. Calculate/accumulate loss and calculate precision
+                loss = loss_fn(output, y)
                 running_loss += loss.detach().item()
+
+                prec1, prec5 = accuracy(output.data, y, topk=(1, 5))
 
                 # 3. Optimzer zero grad
                 optimizer.zero_grad(set_to_none=False)
@@ -70,10 +73,9 @@ def train_step(
 
         # Adjust metrics to get average loss per batch
         avg_train_loss = running_loss / (len(train_dataloader))
-
+        return avg_train_loss, (prec1.detach().item(), prec5.detach().item())
     else:
-        avg_train_loss = np.nan
-    return avg_train_loss
+        return np.nan, np.nan, np.nan
 
 
 def test_step(
@@ -91,33 +93,35 @@ def test_step(
     loss_fn: A PyTorch loss function to calculate loss on test data.
     device: A target device to compute on (e.g. "cuda" or "cpu").
     """
+    with torch.no_grad():
+        # Put model in eval
+        model.eval()
 
-    # Put model in eval
-    model.eval()
+        # Setup train loss over epoch
+        running_loss = 0
 
-    # Setup train loss over epoch
-    running_loss = 0
+        # loop over val/test batches
+        if test_dataloader is not None:
+            for i, data in enumerate(test_dataloader):
+                # Format expected input dimensions and send data to device
+                test_x = data[0].to(device)
 
-    # loop over val/test batches
-    if test_dataloader is not None:
-        for i, data in enumerate(test_dataloader):
-            # Format expected input dimensions and send data to device
-            test_x = data[0].to(device)
+                y = data[1].to(device)
 
-            y = data[1].unsqueeze(dim=1).to(device)
+                # 1. Forward Pass
+                output = model.forward(test_x)
 
-            # 1. Forward Pass
-            output = model.forward(test_x)
+                # 2. Calculate/accumulate loss and calculate accuracy
+                loss = loss_fn(output, y)
+                running_loss += loss.detach().item()
 
-            # 2. Calculate and accumulate loss
-            loss = loss_fn(output.float(), y.float())
-            running_loss += loss.detach().item()
+                prec1, prec5 = accuracy(output.data, y, topk=(1, 5))
 
-        # Adjust metrics to get average loss and accuracy per batch
-        avg_test_loss = running_loss / (len(test_dataloader))
-    else:
-        avg_test_loss = np.nan
-    return avg_test_loss
+            # Adjust metrics to get average loss and accuracy per batch
+            avg_test_loss = running_loss / (len(test_dataloader))
+            return avg_test_loss, (prec1.detach().item(), prec5.detach().item())
+        else:
+            return np.nan, np.nan, np.nan
 
 
 def train(
@@ -167,10 +171,12 @@ def train(
     results: Dict[str, list] = {}
     results["train_loss"] = []
     results["val_loss"] = []
+    results["train_precision"] = []
+    results["val_precision"] = []
 
     # Loop through training and testing steps for a number of epochs
     for epoch in range(epochs):
-        train_loss = train_step(
+        train_loss, train_precision = train_step(
             epoch=epoch,
             model=model,
             train_dataloader=train_dataloader,
@@ -181,7 +187,7 @@ def train(
         )
 
         logger.info("Calculating validation loss")
-        val_loss = test_step(
+        val_loss, val_precision = test_step(
             model=model, test_dataloader=val_dataloader, loss_fn=loss_fn, device=device
         )
 
@@ -195,6 +201,8 @@ def train(
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["val_loss"].append(val_loss)
+        results["train_precision"].append(train_precision)
+        results["val_precision"].append(val_precision)
 
         if wandb is True:
             pass

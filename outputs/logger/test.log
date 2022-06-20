@@ -24,3 +24,37 @@ Epoch: 1 | train_loss: 96.0539 | val_loss: nan |
 Model trained in: 0.378 seconds
 Model tested in: 0.205 seconds
 LOSS train 96.05390930175781 valid nan test 0.5866953134536743
+Model running with parameters: Namespace(batch_size=1, data_dir='/home/emily/phd/misc/recode/tests/test_input/test_images/', epochs=1, lr=0.001, metadata='tests/test_input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 1 images in the original training set
+There were 0 images in the original validation set
+There were 1 images in the original test set
+There are 1 images in the train DataLoader
+There are 1 images in the test DataLoader
+Model loaded with 94012481 parameters
+Calculating validation loss
+Epoch: 1 | train_loss: 101.2232 | val_loss: nan | 
+Model trained in: 0.405 seconds
+Model tested in: 0.204 seconds
+LOSS train 101.22318267822266 valid nan test 0.5293411612510681
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='tests/test_input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model loaded with 43248045 parameters
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model loaded with 42510405 parameters
+Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_test_input/', epochs=1, lr=0.001, metadata='input/meta/', model='resnet101', oversample=False, pre='resnet', root_dir='/home/emily/phd/misc/recode/', run_name='test', study_id='50a68a51fdc9f05596000002', verbose=False)
+There are 5 images in the train DataLoader
+Model loaded with 42510405 parameters
+Calculating validation loss
+Epoch: 1 | train_loss: 1.6113 | val_loss: nan | 
+Model trained in: 0.953 seconds
+Model tested in: 0.002 seconds
+LOSS train 1.6112993717193604 valid nan test nan

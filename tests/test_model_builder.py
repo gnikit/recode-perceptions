@@ -10,11 +10,12 @@ def test_model_builder():
     model = MyCNN()
     x = torch.randn(1, 3, 224, 224)
     out = model(x)
+    print(out.shape)
     # =================================
     # TEST SUITE
     # =================================
     # Check the length of the returned object
-    assert len(out) == 1
+    assert out.shape[1] == 365
 
 
 def test_model_builder2():
@@ -30,4 +31,4 @@ def test_model_builder2():
     # TEST SUITE
     # =================================
     # Check the length of the returned object
-    assert len(out) == 1
+    assert out.shape[1] == 365

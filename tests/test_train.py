@@ -1,35 +1,20 @@
-from pathlib import Path
-
 import numpy as np
 import torch
 import torch.nn as nn
 
 
-def test_training_epoch(root_dir, test_data, study, params, metadata):
+def test_training_epoch(root_dir, test_data, params):
     """tests dataset iterator"""
     import deep_cnn.train as train
     from deep_cnn.dataset_generator import dataloader
-    from deep_cnn.datautils import pp_process_input
     from deep_cnn.model_builder import MyCNN
 
-    df_train, df_val, _ = pp_process_input(
-        root_dir=root_dir,
-        data_dir=test_data,
-        metadata=metadata,
-        oversample=False,
-        verbose=False,
-        perception_study=study,
-    )
-    train_dataloader = dataloader(
-        df_train, Path(root_dir, test_data), "resnet", "train", params
-    )
-    val_dataloader = dataloader(
-        df_val, Path(root_dir, test_data), "resnet", "val", params
-    )
+    train_dataloader, _ = dataloader(test_data, root_dir, "resnet", "train", params)
+    val_dataloader, _ = dataloader(test_data, root_dir, "resnet", "val", params)
     model = MyCNN()
 
     optimizer = torch.optim.Adam(model.parameters(), 0.001)
-    loss_fn = nn.MSELoss()
+    loss_fn = nn.CrossEntropyLoss()
 
     train_val_loss = train.train(
         model=model,
@@ -48,4 +33,6 @@ def test_training_epoch(root_dir, test_data, study, params, metadata):
     # =================================
     # Check train loss is not none and val loss is np.nan
     assert train_val_loss["train_loss"][0] != np.nan
-    assert train_val_loss["val_loss"][0] is np.nan
+    assert train_val_loss["val_loss"][0] != np.nan
+    assert train_val_loss["val_precision"][0] != np.nan
+    assert train_val_loss["val_precision"][0] != np.nan

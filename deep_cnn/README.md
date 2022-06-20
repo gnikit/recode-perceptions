@@ -6,7 +6,6 @@ In this exercise we will fine-tune a pretrained CNN to learn to predict percepti
 
 - Training Locally
 - Export to HPC
-- Design choices
 - Hyperparameter Optimisation
 
 ### Training Locally
@@ -18,21 +17,25 @@ Let's check the model training runs locally (albeit slowly without a GPU). From 
 ```sh
 root_dir$ python deep_cnn/train_model.py\
 --epochs=1                              \
---batch_size=1                          \
+--batch_size=56                         \
 --model='resnet101'                     \
---oversample=True                       \
 --lr=1e-3                               \
---study_id='50a68a51fdc9f05596000002'   \
 --data_dir=data_dir                     \
 --root_dir=root_dir                     \
---metadata=meta_dir                     \
 ```
 
-where root_dir is your local path to recode-perceptions, and data_dir is your path to recode-perceptions/input/images/. If you have not yet downloaded the images, you can run the test images, tests/test_input/test_images/. Similarly for metadata.
+where root_dir is your local path to recode-perceptions, and data_dir is your path to input/places365standard_easyformat/places365_standard. If you have not yet downloaded the images, you can run the test images, tests/test_input/test_images/. Similarly for metadata.
 
-You should see the following output ...
+You should see the following output in your terminal:
 
-The model has been trained, but for only one epoch. What do you notice about the test accuracy after just one epoch? Let's now migrate the programme to the HPC so we can utilise the GPUs available for faster implementation.
+```
+Running on cuda device
+Epoch 0:   0%|▍                                                                                 | 20/4371 [00:12<42:52,  1.69batch/s, loss=8.17]
+```
+
+If you have a gpu locally, you will also see 'Running on cuda device'. However, this will be replaced by cpu if no gpu device is found. The model is training through its first epoch batch by batch. This one epoch is expected to take 42 minutes to complete.
+
+Once finished, the full log can be found in outputs/logger/default.log.
 
 ### Export to HPC
 
