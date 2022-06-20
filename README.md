@@ -1,8 +1,18 @@
 # PyTorch implementation for end-to-end training of a deep learning model
 
-Recode Perceptions is a pyTorch implementation of a deep convolutional neural network model trained on place pulse perceptions data, developed by Emily Muller.
+Recode Perceptions is a pyTorch implementation of a deep convolutional neural network model trained on Places365 data, developed by Emily Muller.
 
-This model is trained on 70K images with associated perception scores to be able to predict safety, beauty and wealth across new unseen images of the urban environment. Through transfer learning the model can achieve prediction accuracies within plus or minus one decile.
+This model is trained on a subset of 100K images which have outcome labels that are associated to factors which are relevant for environmental health.
+
+## How to Use this Repository
+
+This repository has 3 core learning components:
+
+- Substantive introduction to environmental health monitoring using imagery: this will give you a brief introduction to this field of research including seminar texts which you can familiarise yourself with.
+- Foundations of Deep CNN's using PyTorch: we will demonstrate some core components of pytorch CNN implementation using benchmark datasets and transfer learning. This jupyter notebook is also in the learning folder.
+- deep_cnn: you will run the image task locally before exporting the entire folder to the HPC. Here, you will be able to make use of the numerous GPU's for effective hyperparamter optimisation.
+
+The final component of the repository will challenge you to be comfortable with bash scripts and the command line since we will no longer be using jupyter notebooks.
 
 ## Overview
 
@@ -52,19 +62,39 @@ The final command requires you to have python installed and will install all the
 
 ### Dataset
 
-The dataset can be downloaded from dropbox. Run wget (below) to download all of the Place Pulse images (~3GB) and put them in the input/images/ directory:
+The dataset can be downloaded from dropbox. Run wget (below) to download all of the Places365 train/val images (~21GB) and put them in the input/ directory:
 
 ```
-wget -O /root_dir/recode/input/images.zip https://www.dropbox.com/s/grzoiwsaeqrmc1l/place-pulse-2.0.zip?dl=1
+wget -O /root_dir/recode/input/places365standard_easyformat.tar http://data.csail.mit.edu/places/places365/places365standard_easyformat.tar
 ```
 
 where root_dir is the path to the recode repository. Unzip/extract all files in the same location
 
 ```
-unzip images.zip
+tar -xvf places365standard_easyformat.tar
 ```
 
-In addition, unzip input/meta.zip to extract the label information. The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Place Pulse](https://arxiv.org/pdf/1608.01769.pdf).
+We will remove categories which are not substantively interesting for the theme of environmental health. To do so run
+
+```
+cd input
+GLOBIGNORE=$(paste -s -d : keep.txt)
+cd places365standard_easyformat/places365_standard/train
+rm -rf *
+cd ../val
+rm -rf *
+unset GLOBIGNORE
+```
+
+GLOBIGNORE specifies folders which should be ignored when performing recursive deletes.
+
+Download the test set
+
+```
+wget -O /root_dir/recode/input/places365standard_easyformat/ http://data.csail.mit.edu/places/places365/test_256.tar
+```
+
+The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Places365](http://places2.csail.mit.edu/PAMI_places.pdf).
 
 ### Testing
 
