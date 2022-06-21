@@ -25,19 +25,13 @@ def argument_parser(args=None):
     )
     parser.add_argument("--lr", default=1e-3, type=float, help="learning rate")
     parser.add_argument(
-        "--study_id",
-        default="50a68a51fdc9f05596000002",
-        type=str,
-        help="perceptions_1_to_6",
-    )
-    parser.add_argument(
         "--run_name",
         default="default",
         type=str,
         help="unique name to identify hyperparameter choices",
     )
     parser.add_argument("--data_dir", default="input/images/", type=str, help="dataset")
-    parser.add_argument("--verbose", default=False, type=bool, help="intermed. outputs")
+    parser.add_argument("--wandb", default=False, type=bool, help="wandb outputs")
     return parser.parse_args(args)
 
 

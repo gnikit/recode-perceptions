@@ -4,6 +4,8 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
+import wandb
+
 from .logger import logger
 from .utils import accuracy
 
@@ -134,7 +136,7 @@ def train(
     epochs: int,
     device: torch.device,
     save_model: str,
-    wandb: bool,
+    wb: bool,
 ):
     """Trains PyTorch model and reports validation accuracy
 
@@ -204,14 +206,15 @@ def train(
         results["train_precision"].append(train_precision)
         results["val_precision"].append(val_precision)
 
-        if wandb is True:
-            pass
-            # wandb.log(
-            #     {
-            #         "loss_train": train_loss,
-            #         "loss_val": val_loss,
-            #     }
-            # )
+        if wb is True:
+            wandb.log(
+                {
+                    "loss_train": train_loss,
+                    "precision_train": train_precision,
+                    "loss_val": val_loss,
+                    "precision_val": val_precision,
+                }
+            )
 
     if save_model is not None:
         state = {

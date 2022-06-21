@@ -1,8 +1,9 @@
 import os
 
+import torch
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 
 from .logger import logger
 
@@ -36,14 +37,38 @@ def dataloader(data_dir, root_dir, transform, split, params):
 
     if os.path.isdir(dir):
         # Data loading
-        data_iterator = datasets.ImageFolder(dir, preprocess)
-        loader = DataLoader(data_iterator, **params)
-        logger.info(
-            "There are %s images in the %s DataLoader"
-            % (str(loader.__len__() * params["batch_size"]), split)
-        )
-        classes = len(os.listdir(dir))
+        if split == "train":
+            data_iterator = datasets.ImageFolder(dir, preprocess)
+            L = len(data_iterator)
+            train_it, val_it = random_split(
+                data_iterator,
+                [int(0.95 * L), int(0.05 * L)],
+                generator=torch.Generator().manual_seed(42),
+            )
+            train_loader = DataLoader(train_it, **params)
+            val_loader = DataLoader(val_it, **params)
+            logger.info(
+                "There are %s images in the %s DataLoader"
+                % (str(train_loader.__len__() * params["batch_size"]), split)
+            )
+            logger.info(
+                "There are %s images in the %s DataLoader"
+                % (str(val_loader.__len__() * params["batch_size"]), "val")
+            )
+            classes = len(os.listdir(dir))
+            test_loader = None
+        else:
+            data_iterator = datasets.ImageFolder(dir, preprocess)
+            test_loader = DataLoader(data_iterator, **params)
+            logger.info(
+                "There are %s images in the %s DataLoader"
+                % (str(test_loader.__len__() * params["batch_size"]), split)
+            )
+            classes = len(os.listdir(dir))
+            train_loader = None
+            val_loader = None
     else:
-        loader = None
+        train_loader = None
+        val_loader = None
         classes = None
-    return loader, classes
+    return train_loader, val_loader, test_loader, classes
