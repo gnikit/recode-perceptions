@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import torch
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
@@ -26,7 +27,7 @@ def preprocessing(transform):
         pass
 
 
-def dataloader(data_dir, root_dir, transform, split, params):
+def dataloader(data_dir, root_dir, transform, split, params, val_split=0.05):
     """Creates dataloader from
     train, val data folders"""
 
@@ -37,38 +38,37 @@ def dataloader(data_dir, root_dir, transform, split, params):
 
     if os.path.isdir(dir):
         # Data loading
-        if split == "train":
+        if val_split > 0 and split == "train":
             data_iterator = datasets.ImageFolder(dir, preprocess)
             L = len(data_iterator)
+            print(L)
             train_it, val_it = random_split(
                 data_iterator,
-                [int(0.95 * L), int(0.05 * L)],
+                [int(np.floor((1 - val_split) * L)), int(np.ceil(val_split * L))],
                 generator=torch.Generator().manual_seed(42),
             )
-            train_loader = DataLoader(train_it, **params)
+            loader = DataLoader(train_it, **params)
             val_loader = DataLoader(val_it, **params)
             logger.info(
                 "There are %s images in the %s DataLoader"
-                % (str(train_loader.__len__() * params["batch_size"]), split)
+                % (str(loader.__len__() * params["batch_size"]), split)
             )
             logger.info(
                 "There are %s images in the %s DataLoader"
                 % (str(val_loader.__len__() * params["batch_size"]), "val")
             )
             classes = len(os.listdir(dir))
-            test_loader = None
         else:
             data_iterator = datasets.ImageFolder(dir, preprocess)
-            test_loader = DataLoader(data_iterator, **params)
+            loader = DataLoader(data_iterator, **params)
             logger.info(
                 "There are %s images in the %s DataLoader"
-                % (str(test_loader.__len__() * params["batch_size"]), split)
+                % (str(loader.__len__() * params["batch_size"]), split)
             )
             classes = len(os.listdir(dir))
-            train_loader = None
             val_loader = None
     else:
-        train_loader = None
+        loader = None
         val_loader = None
         classes = None
-    return train_loader, val_loader, test_loader, classes
+    return loader, val_loader, classes

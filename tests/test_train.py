@@ -9,8 +9,10 @@ def test_training_epoch(root_dir, test_data, params):
     from deep_cnn.dataset_generator import dataloader
     from deep_cnn.model_builder import MyCNN
 
-    train_dataloader, _ = dataloader(test_data, root_dir, "resnet", "train", params)
-    val_dataloader, _ = dataloader(test_data, root_dir, "resnet", "val", params)
+    train_dataloader, _, N = dataloader(
+        test_data, root_dir, "resnet", "train", params, val_split=0
+    )
+    val_dataloader, _, N = dataloader(test_data, root_dir, "resnet", "val", params)
     model = MyCNN()
 
     optimizer = torch.optim.Adam(model.parameters(), 0.001)
@@ -26,7 +28,7 @@ def test_training_epoch(root_dir, test_data, params):
         epochs=1,
         device="cpu",
         save_model=None,
-        wandb=False,
+        wb=False,
     )
     # =================================
     # TEST SUITE

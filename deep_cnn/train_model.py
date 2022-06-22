@@ -13,9 +13,6 @@ from .logger import logger
 from .model_builder import MyCNN
 from .utils import detect_device, output_plots
 
-# logging config
-# logger.logger()
-
 
 def main(opt):
 
@@ -39,10 +36,10 @@ def main(opt):
         "pin_memory": True,
         "drop_last": False,
     }
-    train_dataloader, val_dataloader, _, N = dataloader(
+    train_dataloader, val_dataloader, N = dataloader(
         opt.data_dir, opt.root_dir, opt.pre, "train", params
     )
-    _, _, test_dataloader, _ = dataloader(
+    test_dataloader, _, N = dataloader(
         opt.data_dir, opt.root_dir, opt.pre, "val", params
     )
 
@@ -75,7 +72,7 @@ def main(opt):
         epochs=opt.epochs,
         device=device,
         save_model=Path(opt.root_dir, "outputs/models/", opt.run_name + ".pt"),
-        wandb=opt.wandb,
+        wb=opt.wandb,
     )
     output_plots(train_val_loss, opt.root_dir, opt.run_name)
 
