@@ -36,5 +36,5 @@ def test_training_epoch(root_dir, test_data, params):
     # Check train loss is not none and val loss is np.nan
     assert train_val_loss["train_loss"][0] != np.nan
     assert train_val_loss["val_loss"][0] != np.nan
-    assert train_val_loss["val_precision"][0] != np.nan
-    assert train_val_loss["val_precision"][0] != np.nan
+    assert train_val_loss["train_precision@1"][0] != np.nan
+    assert train_val_loss["val_precision@1"][0] != np.nan
