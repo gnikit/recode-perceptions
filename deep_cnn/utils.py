@@ -14,9 +14,9 @@ def argument_parser(args=None):
     parser.add_argument(
         "--batch_size", default=128, type=int, help="batch size for SGD"
     )
-    parser.add_argument("--model", default="resnet101", type=str, help="model_loaded")
+    parser.add_argument("--model", default="resnet101", type=str, help="pre-trained model")
     parser.add_argument(
-        "--pre", default="resnet", type=str, help="pre processing for image input"
+        "--pre", default="resnet", type=str, help="pre-processing for image input"
     )
     parser.add_argument(
         "--root_dir",
@@ -30,8 +30,9 @@ def argument_parser(args=None):
         type=str,
         help="unique name to identify hyperparameter choices",
     )
-    parser.add_argument("--data_dir", default="input/images/", type=str, help="dataset")
-    parser.add_argument("--wandb", default=False, type=bool, help="wandb outputs")
+    parser.add_argument("--data_dir", default="input/images/", type=str, help="path to input data")
+    parser.add_argument("--wandb", default=False, type=bool, help="track progress in wandb.ai")
+    parser.print_usage = parser.print_help
     return parser.parse_args(args)
 
 
