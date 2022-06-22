@@ -2,9 +2,8 @@ from typing import Dict
 
 import numpy as np
 import torch
-
-import wandb
 from tqdm import tqdm
+import wandb
 
 from .logger import logger
 from .utils import accuracy
