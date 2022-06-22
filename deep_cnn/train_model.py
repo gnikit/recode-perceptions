@@ -4,6 +4,7 @@ from timeit import default_timer as timer
 
 import torch
 import torch.nn as nn
+
 import wandb
 
 from . import train
@@ -38,7 +39,7 @@ def main(opt):
     train_dataloader, val_dataloader, N = dataloader(
         opt.data_dir, opt.root_dir, opt.pre, "train", params
     )
-    test_dataloader, _, N = dataloader(
+    test_dataloader, _, _ = dataloader(
         opt.data_dir, opt.root_dir, opt.pre, "val", params
     )
 

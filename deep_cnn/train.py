@@ -2,8 +2,9 @@ from typing import Dict
 
 import numpy as np
 import torch
-import wandb
 from tqdm import tqdm
+
+import wandb
 
 from .logger import logger
 from .utils import accuracy
@@ -172,8 +173,10 @@ def train(
     results: Dict[str, list] = {}
     results["train_loss"] = []
     results["val_loss"] = []
-    results["train_precision"] = []
-    results["val_precision"] = []
+    results["train_precision@1"] = []
+    results["val_precision@1"] = []
+    results["train_precision@5"] = []
+    results["val_precision@5"] = []
 
     # Loop through training and testing steps for a number of epochs
     for epoch in range(epochs):
@@ -202,16 +205,20 @@ def train(
         # Update results dictionary
         results["train_loss"].append(train_loss)
         results["val_loss"].append(val_loss)
-        results["train_precision"].append(train_precision)
-        results["val_precision"].append(val_precision)
+        results["train_precision@1"].append(train_precision[0])
+        results["val_precision@1"].append(val_precision[0])
+        results["train_precision@5"].append(train_precision[1])
+        results["val_precision@5"].append(val_precision[1])
 
         if wb is True:
             wandb.log(
                 {
                     "loss_train": train_loss,
-                    "precision_train": train_precision,
+                    "precision_train@1": train_precision[0],
+                    "precision_train@5": train_precision[1],
                     "loss_val": val_loss,
-                    "precision_val": val_precision,
+                    "precision_val@1": val_precision[0],
+                    "precision_val@5": train_precision[1],
                 }
             )
 

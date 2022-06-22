@@ -14,7 +14,9 @@ def argument_parser(args=None):
     parser.add_argument(
         "--batch_size", default=128, type=int, help="batch size for SGD"
     )
-    parser.add_argument("--model", default="resnet101", type=str, help="pre-trained model")
+    parser.add_argument(
+        "--model", default="resnet101", type=str, help="pre-trained model"
+    )
     parser.add_argument(
         "--pre", default="resnet", type=str, help="pre-processing for image input"
     )
@@ -30,8 +32,15 @@ def argument_parser(args=None):
         type=str,
         help="unique name to identify hyperparameter choices",
     )
-    parser.add_argument("--data_dir", default="input/images/", type=str, help="path to input data")
-    parser.add_argument("--wandb", default=False, type=bool, help="track progress in wandb.ai")
+    parser.add_argument(
+        "--data_dir",
+        default="input/places365standard_easyformat/places365_standard",
+        type=str,
+        help="path to input data",
+    )
+    parser.add_argument(
+        "--wandb", default=False, type=bool, help="track progress in wandb.ai"
+    )
     parser.print_usage = parser.print_help
     return parser.parse_args(args)
 

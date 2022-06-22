@@ -41,7 +41,6 @@ def dataloader(data_dir, root_dir, transform, split, params, val_split=0.05):
         if val_split > 0 and split == "train":
             data_iterator = datasets.ImageFolder(dir, preprocess)
             L = len(data_iterator)
-            print(L)
             train_it, val_it = random_split(
                 data_iterator,
                 [int(np.floor((1 - val_split) * L)), int(np.ceil(val_split * L))],
