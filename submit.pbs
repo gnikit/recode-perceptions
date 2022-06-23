@@ -1,0 +1,20 @@
+#!/bin/sh
+#PBS -lselect=1:ncpus=4:mem=16gb:ompthreads=4
+#PBS -lwalltime=24:00:00
+
+module load anaconda3/personal
+conda create -n recode-perceptions python=3.7
+source activate recode-perceptions
+conda install -r requirements.txt recode-perceptions
+
+python3 -m deep_cnn                     \
+--epochs=1                              \
+--batch_size=56                         \
+--model='resnet18'                      \
+--lr=1e-3                               \
+--data_dir=data_dir                     \
+--root_dir=root_dir                     \
+--wandb=True                            \
+--run_name=hpc_export                   \
+
+conda deactivate
