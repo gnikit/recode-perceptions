@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict
 
 import numpy as np
@@ -228,6 +229,8 @@ def train(
             "state_dict": model.state_dict(),
             "optimizer": optimizer.state_dict(),
         }
+        if not Path(save_model).parent.is_dir():
+            Path(save_model).parent.mkdir()
         torch.save(state, save_model)
 
     # Return the filled results at the end of the epochs

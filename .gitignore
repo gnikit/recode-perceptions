@@ -8,6 +8,7 @@ venv/
 model/
 wandb/
 deep_cnn/logging.conf
+wandb/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
