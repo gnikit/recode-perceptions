@@ -77,7 +77,7 @@ There is never a one-rule-fits-all-approach to training a deep neural network. D
 
 There exists many different types of [search algorithms](https://en.wikipedia.org/wiki/Hyperparameter_optimization) for finding the optimal hyperparameters, such as gridded search, random search and bayesian optimisation. We would like to add apriori the wisdom of the crowd. There has been a lot written about deep learning hyperparameters so we don't need to go in blind. To help you configure some intervals, consider the following questions
 
-1) How many epochs will ensure you have reached the global miniima?
+1) How many epochs will ensure you have reached the global minima?
 2) How much memory constraints do you have on model and batch size?
 3) What ratio of batch size to data samples/classes is considered a benchmark?
 4) What is a typical learning rate for similar image classification tasks?
@@ -94,9 +94,9 @@ When performing hyperparamter optimisation, we will not evaluate our test perfor
 We will use weights and biases to track our model training and validation. This platform uses a lightweight python package to log metrics during training. To use this, you will need to create an educational account at [https://wandb.ai/site](https://wandb.ai/site). Once you have configured your user credentials, create a new project called recode-perceptions. This folder will log all of our training runs. In order for python to get access to your personal user credentials, you will have to set them as environmental variables which python then accesses using os.getenv("password"). Set your environmental variables as follows:
 
 ```
-root_dir$ export $WB_KEY=weights_and_biases_login_key
-export $WB_project="recode-perceptions"
-export $WB_USER="weights_and_biases_user"
+root_dir$ export WB_KEY=weights_and_biases_login_key
+export WB_PROJECT="recode-perceptions"
+export WB_USER="weights_and_biases_user"
 ```
 
 If you now run the scripts with --wandb=True, you should begin to see the metrics being tracked on the platform:
@@ -105,4 +105,44 @@ If you now run the scripts with --wandb=True, you should begin to see the metric
 
 ### Export to HPC
 
+#### Getting Started
 
+We can move our training to the HPC to utilise the hardware resources available to us on the university cluster. If you haven't yet had the chance, now is a good time to read more about the computer services offered by the [High Performance Computing](https://www.imperial.ac.uk/computational-methods/hpc/) cluster. There is a lot of help available from online resources, support clinics, or training courses.
+
+You can [connect to the HPC using SSH](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/support/getting-started/using-ssh/):
+
+```
+ssh -XY user@login.hpc.ic.ac.uk
+```
+
+You will be prompted to enter your password. You now have terminal access to your remote HPC resources. You will need a remote copy of the recode-perceptions repository. You can either git clone directly into the HPC remote server, or copy the files over from your local to remote drive. If you choose the former, you will still have to download the images.
+
+The [Research Data Store is accessible](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/support/getting-started/data-management/) as a network share, at the location \\rds.imperial.ac.uk\RDS\user\. There you will have read/write access to your home and ephemeral spaces, along with any projects you are a member of. Alternatively, you can [scp](https://www.imperial.ac.uk/computing/csg/guides/file-storage/scp/) into the HPC to secure copy files:
+
+```
+scp local/file/here user@login.hpc.ic.ac.uk:/remote/file/here
+```
+
+#### Setting up the Environment
+
+Similarly to how we created a virtual environment locally, we will have to conifugure our environment on the hpc. We will be using [anaconda](https://anaconda.org/) this time, which is a distibution of Python which aims to simplify package management.
+
+The environment.sh bash file is in the main repo and can be executed with the following:
+
+```
+[user@login-c recode-perceptions]$ chmod +xr environment.sh
+[user@login-c recode-perceptions]$ ./environment.sh
+```
+
+This file first loads the conda and cuda module and then initiaties a Python 3.7 environment before conifiguring the necessary packages. This should take a few minutes.
+
+#### Submitting jobs to the HPC
+
+Once the environment is configured, we can submit the programme requesting access to HPC GPU's:
+
+```qsub submit.pbs
+```
+
+In this file you need to enter wandb environmental variables as per the previous step. See HPC resources for [how to request GPUs](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/computing/job-sizing-guidance/gpu/). Job submissions will result in the creation of two files, stderr and stdout. Inspecting these files you will see similar outputs to when we ran the programme locally. In addition, logger will write file to outputs/logger, as well as training being logged on wandb.ai.
+
+Revisit Hyperparameter Optimisation and iterate on model choices using run_name to track design choices.

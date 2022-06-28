@@ -104,11 +104,11 @@ def test_step(
 
         # loop over val/test batches
         if test_dataloader is not None:
-            for i, data in enumerate(test_dataloader):
+            for i, (data, y) in enumerate(test_dataloader):
                 # Format expected input dimensions and send data to device
-                test_x = data[0].to(device)
+                test_x = data.to(device)
 
-                y = data[1].to(device)
+                y = y.to(device)
 
                 # 1. Forward Pass
                 output = model.forward(test_x)

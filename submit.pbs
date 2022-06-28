@@ -1,20 +1,24 @@
 #!/bin/sh
-#PBS -lselect=1:ncpus=4:mem=16gb:ompthreads=4
 #PBS -lwalltime=24:00:00
+#PBS -lselect=1:ncpus=16:mem=96gb:ngpus=1:gpu_type=RTX6000
 
 module load anaconda3/personal
-conda create -n recode-perceptions python=3.7
-source activate recode-perceptions
-conda install -r requirements.txt recode-perceptions
+module load cuda/10.2
+source activate recode
 
-python3 -m deep_cnn                     \
+export PYTHONPATH=$HOME                              # path to recode-perceptions to run deep_cnn as module
+export WB_KEY=weights_and_biases_login_key
+export WB_PROJECT="recode-perceptions"
+export WB_USER="weights_and_biases_user"
+
+python -m deep_cnn \
 --epochs=1                              \
 --batch_size=56                         \
 --model='resnet18'                      \
 --lr=1e-3                               \
---data_dir=data_dir                     \
---root_dir=root_dir                     \
+--data_dir=input/places365standard_easyformat/places365_standard/                    \
+--root_dir=$PYTHONPATH                  \
 --wandb=True                            \
---run_name=hpc_export                   \
+--run_name=hpc_export_gpu               \
 
 conda deactivate

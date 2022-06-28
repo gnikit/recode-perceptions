@@ -8,16 +8,15 @@ This model is trained on a subset of 100K images which have outcome labels that 
 
 This repository has 3 core learning components:
 
-- Substantive introduction to environmental health monitoring using imagery: this will give you a brief introduction to this field of research including seminar texts which you can familiarise yourself with.
-- Foundations of Deep CNN's using PyTorch: we will demonstrate some core components of pytorch CNN implementation using benchmark datasets and transfer learning. This jupyter notebook is also in the learning folder.
-- deep_cnn: you will run the image task locally before exporting the entire folder to the HPC. Here, you will be able to make use of the numerous GPU's for effective hyperparamter optimisation.
-
-The final component of the repository will challenge you to be comfortable with bash scripts and the command line since we will no longer be using jupyter notebooks.
+| Title | Description | Location | Key Learning Objectives  |
+|--------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Introduction to Environmental Health and Imagery | This is a short video, introducing the domain, methods and describing some of the pioneering work in this field                                                                                           | [Video](learning/)                              | Introduction to the field. Understand different methods. Understand different types of data. Be aware of seminal research.                                                                                                                                                                                                       |
+| Foundations of Deep CNN's using PyTorch          | A Jupyter Notebook familiarising students with core components of deep learning framework using PyTorch.                                                                                                  | [Jupyter Notebook](learning/convolutional_neural_networks.ipynb) | Be aware of different types of Computer Vision tasks. Be able to explain what a convolutional layer does and how it's different from a fully-connected layer. Identify different components of a CNN. Load an image dataset in PyTorch. Load a pre-trained model in PyTorch. Be able to use PyTorch to train a model on a dataset |
+| deep_cnn  | This module contains all the code needed to fine-tune a deep neural network on the Places365 classification task. Detailed documentation is provided in the folder README.md but requires set up (below). | [deep_cnn](deep_cnn/README.md)                                    | Use terminal for executing python scripts Train a PyTorch model and visualise results. Export training to the HPC. Implement bach script Iterate on model hyperparameters to optimise model. |
 
 ## Overview
 
 - learning/ contains learning material to help you understand the science of deep learning and the substantive background of urban perception.
-- demo/ contains a notebook showing how to import a dataset, load a model and run it on that dataset making forward and backward passes.
 - deep_cnn/ contains code for full model training pipeline.
 - model/ contains an already trained model.
 - input/ contains the original image data (to download - see below) and metadata.
@@ -87,12 +86,6 @@ unset GLOBIGNORE
 ```
 
 GLOBIGNORE specifies folders which should be ignored when performing recursive deletes.
-
-Download the test set
-
-```
-wget -O /root_dir/recode/input/places365standard_easyformat/ http://data.csail.mit.edu/places/places365/test_256.tar
-```
 
 The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Places365](http://places2.csail.mit.edu/PAMI_places.pdf).
 

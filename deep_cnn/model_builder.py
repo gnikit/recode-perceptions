@@ -36,7 +36,6 @@ class MyCNN(nn.Module):
         return pytorch_total_params
 
 
-# where should these function be?
 def initialise_model(model_base):
     """Function to initiliase pre-trained model and remove final layers"""
     method_to_call = getattr(models, model_base)
