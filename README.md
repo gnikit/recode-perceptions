@@ -14,6 +14,12 @@ This repository has 3 core learning components:
 | Foundations of Deep CNN's using PyTorch          | A Jupyter Notebook familiarising students with core components of deep learning framework using PyTorch.                                                                                                  | [Jupyter Notebook](learning/convolutional_neural_networks.ipynb) | Be aware of different types of Computer Vision tasks. Be able to explain what a convolutional layer does and how it's different from a fully-connected layer. Identify different components of a CNN. Load an image dataset in PyTorch. Load a pre-trained model in PyTorch. Be able to use PyTorch to train a model on a dataset |
 | deep_cnn  | This module contains all the code needed to fine-tune a deep neural network on the Places365 classification task. Detailed documentation is provided in the folder README.md but requires set up (below). | [deep_cnn](deep_cnn/README.md)                                    | Use terminal for executing python scripts Train a PyTorch model and visualise results. Export training to the HPC. Implement bach script Iterate on model hyperparameters to optimise model. |
 
+The suggested way to use this repository is as follows:
+
+- Continue with set-up as detailed below.
+- Complete learning materials 1 ([Video](learning/)) and 2 ([Jupyter Notebook](learning/convolutional_neural_networks.ipynb)).
+- Continue to model training in 3 ([deep_cnn](deep_cnn/README.md)).
+
 ## Overview
 
 - learning/ contains learning material to help you understand the science of deep learning and the substantive background of urban perception.
@@ -23,19 +29,59 @@ This repository has 3 core learning components:
 - output/ folder for model training outputs.
 - tests/ contains unit tests for the codebase.
 
+```
+recode-perceptions
+│   README.md
+│   .pre-commit-config.yaml             # configure pre-commit tools for formatting codebase
+│   setup.cfg                           # set-up for pre-commit
+│   requirements-dev.txt                # python packages for development
+│   requirements.txt                    # python packages for running programme
+│   environment.sh                      # HPC environment set-up (see)
+│   submit.pbs                          # job submission for HPC (see)
+│
+└───deep_cnn                            # module for model training (see)
+│   │   __init__.py
+│   │   __main__.py
+│   │   logger.py
+│   │   utils.py
+│   │   dataset_generator.py
+│   │   model_builder.py
+│   │   train.py
+│   │   train_model.py
+│
+└───input                               # folder to download images
+│   │   keep.txt                        # images to remove
+│   └───places365standard_easyformat    # images downloaded (see)
+│   │   │   ...                         # metadata
+│   │   └───places365_standard
+│   │   │   └───train
+│   │   │   └───val
+│
+└───learning
+│   │   convolutional_neural_networks.ipynb
+│
+└───outputs
+│   └───logger                          # logging output from model training
+│   └───models                          # save model checkpoints
+│   └───results                         # save model training metrics
+│
+└───tests                               # folder for testing
+│   └───places_test_input
+│   │   ...
+```
+
 ## Getting started
 
-Clone this repository into your local drive. root_dir will now refer to the /local_path/to_this/directory/recode-perceptions.
+Clone this repository into your local drive.
 
 ```sh
-git clone
+git clone https://github.com/ImperialCollegeLondon/recode-perceptions.git
 cd recode-perceptions
-pip install -r requirements.txt
 ```
 
 ### Installation
 
-We assume that you're using Python 3.7 with pip installed.
+We assume that you're using Anaconda + Python 3.7.
 
 ### Setting up a virtual environment
 
