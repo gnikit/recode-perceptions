@@ -4,7 +4,6 @@ from typing import Dict
 import numpy as np
 import torch
 from tqdm import tqdm
-
 import wandb
 
 from .logger import logger
