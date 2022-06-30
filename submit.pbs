@@ -7,9 +7,9 @@ module load cuda/10.2
 source activate recode
 
 export PYTHONPATH=$HOME                              # path to recode-perceptions to run deep_cnn as module
-export WB_KEY=weights_and_biases_login_key
+export WB_KEY=API_KEY
 export WB_PROJECT="recode-perceptions"
-export WB_USER="weights_and_biases_user"
+export WB_USER="username"
 
 python -m deep_cnn \
 --epochs=1                              \

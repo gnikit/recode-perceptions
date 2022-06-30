@@ -11,23 +11,19 @@ In this exercise we will fine-tune a pretrained CNN to learn to predict percepti
 
 Locally means using the current hardware in your computer or laptop to run model training. If you have not yet done so, now is a good time to clone this repository into your local drive (see Getting Started).
 
-Let's check the model training runs locally (albeit slowly without a GPU). From root_dir run:
+Let's check the model training runs locally (albeit slowly without a GPU). From recode-perceptions run:
 
-```sh
-root_dir$ python3 -m deep_cnn           \
+```
+python3 -m deep_cnn                     \
 --epochs=1                              \
---batch_size=56                         \
---model='resnet18'                      \
---lr=1e-3                               \
---data_dir=data_dir                     \
---root_dir=root_dir                     \
+--data_dir=tests/places_test_input      \
 --wandb=False                           \
 ```
 
 A brief description of all arguments is returned with the following:
 
 ```
-root_dir $ python3 -m deep_cnn -h
+python3 -m deep_cnn -h
 usage: __main__.py [-h] [--epochs EPOCHS] [--batch_size BATCH_SIZE]
                    [--model MODEL] [--pre PRE] [--root_dir ROOT_DIR] [--lr LR]
                    [--run_name RUN_NAME] [--data_dir DATA_DIR] [--wandb WANDB]
@@ -73,7 +69,7 @@ Let's take a look at the design choices which can be made for model training.
 
 There is never a one-rule-fits-all-approach to training a deep neural network. Design choices can be guided by the domain task, the dataset size and distribution, hardware constraints, time constraints or all of the above. The wonder of moden software and computing is that the cycle of iterating on model choices has been sped up enormously:
 
-![alt text](./learning/Images/image_tasks.png "Hyperparameter Optimisation Cycle")
+![alt text](./images/image_tasks.png "Hyperparameter Optimisation Cycle")
 
 There exists many different types of [search algorithms](https://en.wikipedia.org/wiki/Hyperparameter_optimization) for finding the optimal hyperparameters, such as gridded search, random search and bayesian optimisation. We would like to add apriori the wisdom of the crowd. There has been a lot written about deep learning hyperparameters so we don't need to go in blind. To help you configure some intervals, consider the following questions
 
@@ -91,21 +87,23 @@ When performing hyperparamter optimisation, we will not evaluate our test perfor
 
 #### Hyperparamter optimisation using wandb.ai
 
-We will use weights and biases to track our model training and validation. This platform uses a lightweight python package to log metrics during training. To use this, you will need to create an educational account at [https://wandb.ai/site](https://wandb.ai/site). Once you have configured your user credentials, create a new project called recode-perceptions. This folder will log all of our training runs. In order for python to get access to your personal user credentials, you will have to set them as environmental variables which python then accesses using os.getenv("password"). Set your environmental variables as follows:
+We will use weights and biases to track our model training and validation. This platform uses a lightweight python package to log metrics during training. To use this, you will need to create an account at [https://wandb.ai/site](https://wandb.ai/site). You can create an account using your github or gmail. You will be prompted to create a username, keep a note of this. Once you have completed your registration, you will be directed to a landing page with an API key, keep a note of this tto.
+
+Once you have configured your user credentials, create a new project called recode-perceptions. This folder will log all of our training runs. In order for python to get access to your personal user credentials, you will have to set them as environmental variables which python then accesses using os.getenv("WB_KEY"). Set your environmental variables as follows:
 
 ```
-root_dir$ export WB_KEY=weights_and_biases_login_key
-export WB_PROJECT="recode-perceptions"
-export WB_USER="weights_and_biases_user"
+recode-perceptions$ export WB_KEY=API_KEY
+recode-perceptions$ export WB_PROJECT="recode-perceptions"
+recode-perceptions$ export WB_USER="username"
 ```
 
 If you now run the scripts with --wandb=True, you should begin to see the metrics being tracked on the platform:
 
-![alt text](./learning/Images/wandb.png "Logging metrics using wandb")
+![alt text](./images/wandb.png "Logging metrics using wandb")
 
-### Export to HPC
+## Export to HPC
 
-#### Getting Started
+### Getting Started
 
 We can move our training to the HPC to utilise the hardware resources available to us on the university cluster. If you haven't yet had the chance, now is a good time to read more about the computer services offered by the [High Performance Computing](https://www.imperial.ac.uk/computational-methods/hpc/) cluster. There is a lot of help available from online resources, support clinics, or training courses.
 
@@ -115,15 +113,40 @@ You can [connect to the HPC using SSH](https://www.imperial.ac.uk/admin-services
 ssh -XY user@login.hpc.ic.ac.uk
 ```
 
-You will be prompted to enter your password. You now have terminal access to your remote HPC resources. You will need a remote copy of the recode-perceptions repository. You can either git clone directly into the HPC remote server, or copy the files over from your local to remote drive. If you choose the former, you will still have to download the images.
+The [Research Data Store is accessible](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/support/getting-started/data-management/) as a network share, at the location \\rds.imperial.ac.uk\RDS\user\. There you will have read/write access to your home and ephemeral spaces, along with any projects you are a member of.
 
-The [Research Data Store is accessible](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/support/getting-started/data-management/) as a network share, at the location \\rds.imperial.ac.uk\RDS\user\. There you will have read/write access to your home and ephemeral spaces, along with any projects you are a member of. Alternatively, you can [scp](https://www.imperial.ac.uk/computing/csg/guides/file-storage/scp/) into the HPC to secure copy files:
+You will be prompted to enter your password. You now have terminal access to your remote HPC resources. You will need a remote copy of the recode-perceptions repository. Git clone this directly as in the main repo README.md and proceed to download the Image dataset
+
+### Dataset
+
+The dataset can be downloaded from dropbox. Run wget (below) from the main repository to download all of the Places365 train/val images (~21GB) and put them in the input/ directory:
 
 ```
-scp local/file/here user@login.hpc.ic.ac.uk:/remote/file/here
+wget -O input/places365standard_easyformat.tar http://data.csail.mit.edu/places/places365/places365standard_easyformat.tar
 ```
 
-#### Setting up the Environment
+Unzip/extract all files in the same location:
+
+```
+cd input
+tar -xvf places365standard_easyformat.tar
+```
+
+We will remove categories which are not substantively interesting for the theme of environmental health. To do so run:
+
+```
+cd input
+GLOBIGNORE=$(paste -s -d : keep.txt)
+rm -rf places365standard_easyformat/places365_standard/train/*
+rm -rf places365standard_easyformat/places365_standard/val/*
+unset GLOBIGNORE
+```
+
+GLOBIGNORE specifies folders which should be ignored when performing recursive deletes.
+
+The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Places365](http://places2.csail.mit.edu/PAMI_places.pdf).
+
+### Setting up the Environment
 
 Similarly to how we created a virtual environment locally, we will have to conifugure our environment on the hpc. We will be using [anaconda](https://anaconda.org/) this time, which is a distibution of Python which aims to simplify package management.
 
@@ -136,13 +159,14 @@ The environment.sh bash file is in the main repo and can be executed with the fo
 
 This file first loads the conda and cuda module and then initiaties a Python 3.7 environment before conifiguring the necessary packages. This should take a few minutes.
 
-#### Submitting jobs to the HPC
+### Submitting jobs to the HPC
 
-Once the environment is configured, we can submit the programme requesting access to HPC GPU's:
+Once the environment is configured, we can submit the programme requesting access to HPC GPU's. First, copy over your wandb.ai credentials into the submit.pbs script (lines 10-12). Then run:
 
-```qsub submit.pbs
+```
+qsub submit.pbs
 ```
 
-In this file you need to enter wandb environmental variables as per the previous step. See HPC resources for [how to request GPUs](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/computing/job-sizing-guidance/gpu/). Job submissions will result in the creation of two files, stderr and stdout. Inspecting these files you will see similar outputs to when we ran the programme locally. In addition, logger will write file to outputs/logger, as well as training being logged on wandb.ai.
+See HPC resources for [how to request GPUs](https://www.imperial.ac.uk/admin-services/ict/self-service/research-support/rcs/computing/job-sizing-guidance/gpu/). Job submissions will result in the creation of two files, stderr and stdout. Inspecting these files you will see a similar output to when we ran the programme locally. In addition, logger will write file to outputs/logger, as well as training being logged on wandb.ai.
 
 Revisit Hyperparameter Optimisation and iterate on model choices using run_name to track design choices.

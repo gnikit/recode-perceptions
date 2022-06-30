@@ -20,14 +20,7 @@ The suggested way to use this repository is as follows:
 - Complete learning materials 1 ([Video](learning/)) and 2 ([Jupyter Notebook](learning/convolutional_neural_networks.ipynb)).
 - Continue to model training in 3 ([deep_cnn](deep_cnn/README.md)).
 
-## Overview
-
-- learning/ contains learning material to help you understand the science of deep learning and the substantive background of urban perception.
-- deep_cnn/ contains code for full model training pipeline.
-- model/ contains an already trained model.
-- input/ contains the original image data (to download - see below) and metadata.
-- output/ folder for model training outputs.
-- tests/ contains unit tests for the codebase.
+## File Structure Overview
 
 ```
 recode-perceptions
@@ -85,55 +78,29 @@ We assume that you're using Anaconda + Python 3.7.
 
 ### Setting up a virtual environment
 
-We will set up a virtual environment for running our scripts. In this case, installing specific package versions will not interfere with other programmes we run locally as the environment is contained. Initially, let's set up a virtual environment with python version 3.7:
+We will set up a virtual environment for running our scripts. In this case, installing specific package versions will not interfere with other programmes we run locally as the environment is contained. Initially, let's set up a virtual environment:
 
 ```
-virtualenv --python=python3.7 venv
+conda create -n venv python=3.7
 ```
 
-This will create a new folder named venv in your repository. We can activate this environment by running
+This will create a new folder for the virtual environment named venv in your repository. We activate this environment by running
 
 ```
-source venv/bin/activate
+conda env create -f environment.yml
 ```
 
-Let's configure our environment by installing all the necessary packages located in requirements.txt
+All the dependencies are installed along with the virtual environment. We will manually install the development tools since we do not need those dependencies when we export to HPC and create a virtual environment there.
+
+### Setting up the development virtual environment
+
+The pytest and pre-commit module is required for running tests and formatting. This can be installed by running:
 
 ```
-pip install -r requirements.txt
+conda install requirements_dev.txt
 ```
 
-The final command requires you to have python installed and will install all the packages contained within the requirements.txt file. If an error occurs at this stage, don't panic! Often, this will be a result of python version conflict for a certain package/packages. Make sure that python3.7 version is being used.
-
-### Dataset
-
-The dataset can be downloaded from dropbox. Run wget (below) to download all of the Places365 train/val images (~21GB) and put them in the input/ directory:
-
-```
-wget -O /root_dir/recode/input/places365standard_easyformat.tar http://data.csail.mit.edu/places/places365/places365standard_easyformat.tar
-```
-
-where root_dir is the path to the recode repository. Unzip/extract all files in the same location
-
-```
-tar -xvf places365standard_easyformat.tar
-```
-
-We will remove categories which are not substantively interesting for the theme of environmental health. To do so run
-
-```
-cd input
-GLOBIGNORE=$(paste -s -d : keep.txt)
-cd places365standard_easyformat/places365_standard/train
-rm -rf *
-cd ../val
-rm -rf *
-unset GLOBIGNORE
-```
-
-GLOBIGNORE specifies folders which should be ignored when performing recursive deletes.
-
-The datasets were not released by us and we do not claim any rights on them. Use the datasets at your responsibility and make sure you fulfill the licenses that they were released with. If you use any of the datasets please consider citing the original authors of [Places365](http://places2.csail.mit.edu/PAMI_places.pdf).
+Now run the tests below to make sure everything is set up correctly. Then, proceed to the video.
 
 ### Testing
 
