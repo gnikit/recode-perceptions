@@ -9,6 +9,7 @@ dependencies:
   - cudatoolkit=10.2
   - pytorch==1.9.1
   - torchvision==0.10.1
+  - torchinfo==1.5.4
   - wandb
   - tqdm
   - matplotlib

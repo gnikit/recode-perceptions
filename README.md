@@ -81,13 +81,13 @@ We assume that you're using Anaconda + Python 3.7.
 We will set up a virtual environment for running our scripts. In this case, installing specific package versions will not interfere with other programmes we run locally as the environment is contained. Initially, let's set up a virtual environment:
 
 ```
-conda create -n venv python=3.7
+conda env create -f environment.yml
 ```
 
 This will create a new folder for the virtual environment named venv in your repository. We activate this environment by running
 
 ```
-conda env create -f environment.yml
+conda activate recode
 ```
 
 All the dependencies are installed along with the virtual environment. We will manually install the development tools since we do not need those dependencies when we export to HPC and create a virtual environment there.

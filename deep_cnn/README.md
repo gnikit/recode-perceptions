@@ -69,7 +69,7 @@ Let's take a look at the design choices which can be made for model training.
 
 There is never a one-rule-fits-all-approach to training a deep neural network. Design choices can be guided by the domain task, the dataset size and distribution, hardware constraints, time constraints or all of the above. The wonder of moden software and computing is that the cycle of iterating on model choices has been sped up enormously:
 
-![alt text](./images/image_tasks.png "Hyperparameter Optimisation Cycle")
+![alt text](../images/image_tasks.png "Hyperparameter Optimisation Cycle")
 
 There exists many different types of [search algorithms](https://en.wikipedia.org/wiki/Hyperparameter_optimization) for finding the optimal hyperparameters, such as gridded search, random search and bayesian optimisation. We would like to add apriori the wisdom of the crowd. There has been a lot written about deep learning hyperparameters so we don't need to go in blind. To help you configure some intervals, consider the following questions
 
@@ -99,7 +99,7 @@ recode-perceptions$ export WB_USER="username"
 
 If you now run the scripts with --wandb=True, you should begin to see the metrics being tracked on the platform:
 
-![alt text](./images/wandb.png "Logging metrics using wandb")
+![alt text](../images/wandb.png "Logging metrics using wandb")
 
 ## Export to HPC
 
@@ -119,28 +119,7 @@ You will be prompted to enter your password. You now have terminal access to you
 
 ### Dataset
 
-The dataset can be downloaded from dropbox. Run wget (below) from the main repository to download all of the Places365 train/val images (~21GB) and put them in the input/ directory:
-
-```
-wget -O input/places365standard_easyformat.tar http://data.csail.mit.edu/places/places365/places365standard_easyformat.tar
-```
-
-Unzip/extract all files in the same location:
-
-```
-cd input
-tar -xvf places365standard_easyformat.tar
-```
-
-We will remove categories which are not substantively interesting for the theme of environmental health. To do so run:
-
-```
-cd input
-GLOBIGNORE=$(paste -s -d : keep.txt)
-rm -rf places365standard_easyformat/places365_standard/train/*
-rm -rf places365standard_easyformat/places365_standard/val/*
-unset GLOBIGNORE
-```
+The dataset can be downloaded by executing the data_download.sh script.
 
 GLOBIGNORE specifies folders which should be ignored when performing recursive deletes.
 
