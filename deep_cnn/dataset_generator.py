@@ -13,7 +13,7 @@ def preprocessing(transform):
     if transform == "resnet":
         preprocess = transforms.Compose(
             [
-                transforms.Scale(256),
+                transforms.Resize(256),
                 transforms.CenterCrop(224),
                 transforms.ToTensor(),
                 transforms.Normalize(
