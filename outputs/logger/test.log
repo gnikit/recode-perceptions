@@ -7,7 +7,7 @@ There are 1 images in the train DataLoader
 There are 1 images in the test DataLoader
 Model loaded with 94012481 parameters
 Calculating validation loss
-Epoch: 1 | train_loss: 104.3685 | val_loss: nan | 
+Epoch: 1 | train_loss: 104.3685 | val_loss: nan |
 Model trained in: 0.442 seconds
 Model tested in: 0.163 seconds
 LOSS train 104.36847686767578 valid nan test 0.9956909418106079
@@ -20,7 +20,7 @@ There are 1 images in the train DataLoader
 There are 1 images in the test DataLoader
 Model loaded with 94012481 parameters
 Calculating validation loss
-Epoch: 1 | train_loss: 96.0539 | val_loss: nan | 
+Epoch: 1 | train_loss: 96.0539 | val_loss: nan |
 Model trained in: 0.378 seconds
 Model tested in: 0.205 seconds
 LOSS train 96.05390930175781 valid nan test 0.5866953134536743
@@ -32,7 +32,7 @@ There are 1 images in the train DataLoader
 There are 1 images in the test DataLoader
 Model loaded with 94012481 parameters
 Calculating validation loss
-Epoch: 1 | train_loss: 101.2232 | val_loss: nan | 
+Epoch: 1 | train_loss: 101.2232 | val_loss: nan |
 Model trained in: 0.405 seconds
 Model tested in: 0.204 seconds
 LOSS train 101.22318267822266 valid nan test 0.5293411612510681
@@ -54,7 +54,7 @@ Model running with parameters: Namespace(batch_size=1, data_dir='tests/places_te
 There are 5 images in the train DataLoader
 Model loaded with 42510405 parameters
 Calculating validation loss
-Epoch: 1 | train_loss: 1.6113 | val_loss: nan | 
+Epoch: 1 | train_loss: 1.6113 | val_loss: nan |
 Model trained in: 0.953 seconds
 Model tested in: 0.002 seconds
 LOSS train 1.6112993717193604 valid nan test nan
