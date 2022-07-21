@@ -11,14 +11,14 @@ This repository has 3 core learning components:
 | Title                                            | Description                                                                                                                                                                                                     | Location                                                         | Key Learning Objectives                                                                                                                                                                                                                                                                                                           |
 | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Introduction to Environmental Health and Imagery | This is a short video, introducing the domain, methods and describing some pioneering work in this field                                                                                                        | [Video](docs/)                                               | Introduction to the field. Understand different methods. Understand different types of data. Be aware of seminal research.                                                                                                                                                                                                        |
-| Foundations of Deep CNN's using PyTorch          | A Jupyter Notebook familiarising students with core components of deep learning framework using PyTorch.                                                                                                        | [Jupyter Notebook](docs/convolutional_neural_networks.ipynb) | Be aware of different types of Computer Vision tasks. Be able to explain what a convolutional layer does and how it's different from a fully-connected layer. Identify different components of a CNN. Load an image dataset in PyTorch. Load a pre-trained model in PyTorch. Be able to use PyTorch to train a model on a dataset |
-| `deep_cnn`                                       | This module contains all the code needed to fine-tune a deep neural network on the Places365 classification task. Detailed documentation is provided in the folder README.md but requires to be set up (below). | [deep_cnn](docs/cnn.md)                                   | Use terminal for executing python scripts Train a PyTorch model and visualise results. Export training to the HPC. Implement bach script Iterate on model hyperparameters to optimise model.                                                                                                                                      |
+| Foundations of Deep CNN's using PyTorch          | A Jupyter Notebook familiarising students with core components of deep learning framework using PyTorch.                                                                                                        | [Jupyter Notebook](docs/1-cnn-intro.ipynb) | Be aware of different types of Computer Vision tasks. Be able to explain what a convolutional layer does and how it's different from a fully-connected layer. Identify different components of a CNN. Load an image dataset in PyTorch. Load a pre-trained model in PyTorch. Be able to use PyTorch to train a model on a dataset |
+| `deep_cnn`                                       | This module contains all the code needed to fine-tune a deep neural network on the Places365 classification task. Detailed documentation is provided in the folder README.md but requires to be set up (below). | [deep_cnn](docs/2-cnn-training.md)                                   | Use terminal for executing python scripts Train a PyTorch model and visualise results. Export training to the HPC. Implement bach script Iterate on model hyperparameters to optimise model.                                                                                                                                      |
 
 The suggested way to use this repository is as follows:
 
 - Continue with set-up as detailed below.
-- Complete learning materials 1 ([Video](docs/)) and 2 ([Jupyter Notebook](docs/convolutional_neural_networks.ipynb)).
-- Continue to model training in 3 ([deep_cnn](docs/cnn.md)).
+- Complete learning materials 1 ([Video](docs/)) and 2 ([Jupyter Notebook](docs/1-cnn-intro.ipynb)).
+- Continue to model training in 3 ([deep_cnn](docs/2-cnn-training.md)).
 
 ## File Structure Overview
 
@@ -51,7 +51,7 @@ recode-perceptions
 │   │   │   └───val
 │
 └───learning
-│   │   convolutional_neural_networks.ipynb
+│   │   1-cnn-intro.ipynb
 │
 └───outputs
 │   └───logger                          # logging output from model training

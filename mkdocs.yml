@@ -1,13 +1,29 @@
-site_name: ReCoDE Diffusion Code
+site_name: ReCoDE Perceptions
+repo_url: https://github.com/ImperialCollegeLondon/recode-perceptions
+edit_uri: tree/main/docs/
 theme:
   # recommend leaving this as is
   name: material
   # favicon: favicon.png
 
-  # change as appropriate
   palette:
-    primary: blue grey
-    accent: green
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep blue
+      accent: deep blue
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: deep orange
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
 
   # SPA behaviour
   features:
@@ -32,3 +48,8 @@ markdown_extensions:
 
 extra_javascript:
   - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
+
+# Have to set this to false to be able to display images with paths in both
+# Jupyter notebooks and Mkdocs. Otherwise, Mkdocs-jupyter will load images from
+# /images/... instead of images/....
+use_directory_urls: false

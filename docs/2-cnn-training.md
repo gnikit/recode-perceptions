@@ -65,7 +65,7 @@ Let's take a look at the design choices which can be made for model training.
 
 There is never a one-rule-fits-all-approach to training a deep neural network. Design choices can be guided by the domain task, the dataset size and distribution, hardware constraints, time constraints or all of the above. The wonder of moden software and computing is that the cycle of iterating on model choices has been sped up enormously:
 
-![alt text](../images/image_tasks.jpeg "Hyperparameter Optimisation Cycle")
+![alt text](images/image_tasks.jpeg "Hyperparameter Optimisation Cycle")
 
 There exists many types of [search algorithms](https://en.wikipedia.org/wiki/Hyperparameter_optimization) for finding the optimal hyperparameters, such as gridded search, random search and Bayesian optimisation. We would like to add a priori the wisdom of the crowd. There has been a lot written about deep learning hyperparameters, so we don't need to go in blind. To help you configure some intervals, consider the following questions
 
@@ -95,7 +95,7 @@ export WB_USER="username"
 
 If you now run the scripts with `--wandb=True`, you should begin to see the metrics being tracked on the platform:
 
-![alt text](../images/wandb.png "Logging metrics using wandb")
+![alt text](images/wandb.png "Logging metrics using wandb")
 
 ## Export to HPC
 
